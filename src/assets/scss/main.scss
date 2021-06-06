@@ -169,6 +169,10 @@ h6, .h6 {
   @apply mx-auto lg:mt-48 mt-16 min-h-screen sm:px-0;
 }
 
+.full-page-nomargin {
+  @apply mx-auto min-h-screen sm:px-0;
+}
+
 .fade-enter-active,
 .fade-leave-active {
   @apply transition-all;
@@ -198,7 +202,7 @@ h6, .h6 {
   }
 
   .btn-action {
-    @apply inline-flex items-center justify-center md:px-5 md:py-4 px-2 py-2 border border-transparent text-base font-medium rounded-md hover:shadow-md;
+    @apply inline-flex items-center justify-center md:px-5 md:py-4 px-2 py-2 border border-transparent text-base font-medium rounded-md hover:shadow-md focus:outline-none;
   }
 
   .btn-blue {
@@ -209,7 +213,7 @@ h6, .h6 {
   }
 
   .btn-animate {
-    @apply transition ease-in-out transition-colors;
+    @apply ease-in-out transition-colors duration-300;
   }
 
   .btn-gray {
