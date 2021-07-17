@@ -9,7 +9,7 @@
   force = true
 
 [[redirects]]
-  from = "/checkouts/*"
-  to = "/checkouts/_order_id.html"
+  from = "/checkout/*"
+  to = "/checkout/_order_id.html"
   status = 200
   force = true
