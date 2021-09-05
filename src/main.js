@@ -1,36 +1,24 @@
 // This is the main.js file. Import global CSS and scripts here.
 // The Client API can be used here. Learn more: gridsome.org/docs/client-api
 
+import '~/assets/scss/main.scss'
 import DefaultLayout from '~/layouts/Default.vue'
 
 //import VTooltip from 'v-tooltip'
-import {
-  VTooltip,
-  VPopover,
-  VClosePopover
-} from 'v-tooltip'
+import { VTooltip, VPopover, VClosePopover } from 'v-tooltip'
 
-import '~/assets/scss/main.scss'
 
-import {
-  FontAwesomeIcon
-} from '@fortawesome/vue-fontawesome';
-import {
-  config,
-  library
-} from '@fortawesome/fontawesome-svg-core';
-import {
-  fas
-} from '@fortawesome/free-solid-svg-icons';
-import {
-  fab
-} from '@fortawesome/free-brands-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { config, library } from '@fortawesome/fontawesome-svg-core';
+import { fas } from '@fortawesome/free-solid-svg-icons';
+import { fab } from '@fortawesome/free-brands-svg-icons'
 
 import '@fortawesome/fontawesome-svg-core/styles.css';
 import ClickOutside from 'v-click-outside'
 import InfiniteLoading from 'vue-infinite-loading'
 import VueLazyload from 'vue-lazyload'
 import VueGtag from "vue-gtag";
+import VueFormulate from '@braid/vue-formulate'
 
 config.autoAddCss = false;
 library.add(fas);
@@ -44,8 +32,8 @@ export default function (Vue, {
   // Set default layout as a global component
   Vue.component('Layout', DefaultLayout)
   Vue.component('font-awesome', FontAwesomeIcon)
-
   Vue.use(ClickOutside)
+  Vue.use(VueFormulate)
   
   if( isClient ) {
     VTooltip.options.defaultPlacement = 'top-end';
@@ -56,9 +44,7 @@ export default function (Vue, {
     Vue.directive('close-popover', VClosePopover)
     Vue.component('v-popover', VPopover)
     Vue.use(InfiniteLoading)
-    Vue.use(VueLazyload, {
-      observer: true,
-    })
+    Vue.use(VueLazyload, { observer: true, })
     Vue.use(VueGtag, {
       config: { id: process.env.GRIDSOME_ANALYTICS_PROPERTY_KEY }
     }, router);

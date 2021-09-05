@@ -146,6 +146,7 @@ export default {
   },
   mounted() {
     mediumZoom(".post-content img")
+    console.log(this.$id)
   },
   data: function() {
       return {

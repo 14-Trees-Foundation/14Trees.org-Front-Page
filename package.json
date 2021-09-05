@@ -8,6 +8,7 @@
     "prod": "python3 -m http.server --directory dist/"
   },
   "dependencies": {
+    "@braid/vue-formulate": "^2.5.2",
     "@contentful/rich-text-html-renderer": "^14.1.1",
     "@gridsome/source-contentful": "^0.6.0",
     "@gridsome/source-filesystem": "^0.6.2",

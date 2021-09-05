@@ -1,10 +1,13 @@
 <template>
 	<Layout>
-		<div class="md:m-32 mb-12 text-gray-400 dark:text-gray-600 body-font">
+		<div class="md:m-32 mb-12 text-gray-400 dark:text-gray-600 body-font min-h-screen">
 		<div v-if="loaded" class="container mx-auto flex sm:flex-nowrap flex-wrap md:rounded-2xl bg-gray-100 dark:bg-gray-800" :class="{'md:ring-2 ring-gray-300': paymentCaptured}">
 			<div class="flex-grow sm:mt-0 px-4 md:px-16 pb-12 mx-auto">
-				<div class="flex flex-row pt-16 items-center align-middle gap-4">
-					<p class="text-2xl md:text-4xl font-thin">Order : {{orderId.replace('order_', '')}} </p>
+				<div class="flex flex-row md:pt-16 pt-4 items-center align-middle gap-4">
+					<div>
+					<p class="block w-full text-2xl md:text-4xl font-thin">Confirm Your Order</p>
+					<p class="w-full text-md md:text-xl font-thin">[ Reference ID : <a class="text-blue-700" :href="orderLink">{{orderId.replace('order_', '')}}</a> ]</p>
+					</div>
 					<svg v-if="paymentCaptured" xmlns="http://www.w3.org/2000/svg" class="animate-pulse h-10 w-10 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
 					</svg>
@@ -76,6 +79,7 @@ export default {
 			paymentCaptured: true,
 			loaded: false,
 			processing: false,
+			orderLink: "#"
 		}
 	},
 	async mounted() {
@@ -86,6 +90,7 @@ export default {
 		razorpayCheckout.setAttribute('src', RAZORPAY_CHECKOUT_URI)
 		// razorpayCheckout.async = true
 		document.head.appendChild(razorpayCheckout)
+		this.orderLink = window.location.href
 	},
 	methods: {
 		async loadOrder() {

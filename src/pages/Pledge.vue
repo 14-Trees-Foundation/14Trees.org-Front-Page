@@ -4,15 +4,20 @@
             <h1 class="title-text"> Pledge Now</h1>
             <div class="mx-4 md:pt-16">
  				<div>
- 					<div class="hidden sm:block" aria-hidden="true">
- 						<div class="py-5">
- 							<div class="border-t border-gray-200" />
- 						</div>
- 					</div>
 
  		<ClientOnly>
- 			<form action="#" method="POST" id="pledgeForm" @submit="checkAndSubmitForm" class="mt-24 ml-12 mb-32">
- 				<div id="contribution h-full" class="transition-height duration-500 ease-in-out">
+ 			<form action="#" method="POST" id="pledgeForm" @submit="checkAndSubmitForm" class="mt-18 md:ml-12 md:mb-32 mb-12">
+				<div class="hidden sm:block" aria-hidden="true">
+					<div v-show="false" class="relative pt-1 mx-auto w-11/12">
+						<div class="overflow-hidden h-2 mb-8 text-xs flex rounded bg-gray-200">
+							<div :style="`width:${completion}%`" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-green-500"></div>
+						</div>
+					</div>
+					<div class="py-4 mx-auto">
+						<div class="border-t border-gray-200" />
+					</div>
+				</div>
+ 				<div id="contribution" class=" h-full transition-height duration-500 ease-in-out">
  					<!-- ******************************************************** -->
  					<!-- ****************** Contribution ************************-->
  					<!-- ******************************************************** -->
@@ -42,33 +47,48 @@
  											</div>
 
  											<div class="col-span-4">
- 												<label for="last_name"
- 													class="block text-sm font-medium text-gray-700">Number of Trees</label>
- 												<div class="flex flex-row w-full h-11">
- 													<button type="button" @click="trees--" class="transition-colors duration-200 ease-in-out mr-1 flex-grow bg-gray-100 text-gray-600  hover:bg-red-400 h-full rounded-l cursor-pointer  focus:outline-none">
+ 												<label for="last_name" class="block text-sm font-medium text-gray-700">Number of Trees</label>
+ 												<div class="flex flex-row w-full h-11 border-gray-300 border rounded">
+ 													<button type="button" @click="trees--" class="transition-colors duration-200 ease-in-out flex-grow bg-gray-100 text-gray-600  hover:bg-red-300 h-full rounded-l cursor-pointer  focus:outline-none">
  														<span class="m-auto text-2xl font-thin">−</span>
  													</button>
- 													<input type="number" v-model.number="trees" min="1" class="w-2/3 flex-grow appearance-none input-field" />
- 													<button type="button" @click="trees++" class="transition-colors duration-200 ease-in-out  ml-1 flex-grow bg-gray-100 text-gray-600  hover:bg-green-500 h-full rounded-r cursor-pointer focus:outline-none">
+ 													<input type="number" v-model.number="trees" min="1" class="w-2/3 flex-grow appearance-none input-field border-none rounded-none"/>
+ 													<button type="button" @click="trees++" class="transition-colors duration-200 ease-in-out flex-grow bg-gray-100 text-gray-600  hover:bg-green-400 h-full rounded-r cursor-pointer focus:outline-none">
  														<span class="m-auto text-2xl font-thin">+</span>
  													</button>
  												</div>
  											</div>
 
- 											<div v-if="trees > 0" class="col-span-3">
- 												<label for="names" class="block text-sm font-medium text-gray-700">
-													 Names on Trees</label>
- 												<div v-for="(n,i) in names" :key="i" class="flex flex-row items-center">
-													<span class="px-4 h-full text-sm font-medium text-gray-500 align-center align-text-bottom">{{i + 1}}.</span>
- 													<input type="text" v-model="names[i]" class="input-field my-1"/>
- 													<button type="button" @click="names.splice(i, 1)" class="block ml-4 w-5 h-5 hover:bg-red-200 rounded-md">
-						 								<svg xmlns="http://www.w3.org/2000/svg" class="fill-current text-gray-500" viewBox="0 0 20 20">
- 															<path fill-rule="evenodd"
- 																d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
- 																clip-rule="evenodd" />
- 														</svg> </button>
+ 											<div v-if="trees > 0" class="col-span-4">
+ 												<label for="name-add" class="block text-sm font-medium text-gray-700">Add upto {{trees}} names</label>
+ 												<div class="flex flex-row w-full h-11 border-gray-300">
+													<!-- <div class="text-xl font-medium text-gray-500 p-2 max-w-12 h-full whitespace-nowrap">
+														<span class="text-gray-400">{{names.length}}</span> / <span>{{trees}}</span>
+													</div> -->
+ 													<input type="text" v-model="addName" name="name-add" id="name-add" autocomplete="off" class="input-field flex-grow max-w-2/3 rounded-none rounded-l"/>
+ 													<button :disabled="names.length >= trees" type="button" @click="addCurrentName()" class="transition-colors duration-200 ease-in-out bg-gray-100 text-gray-600  hover:bg-green-400 h-full rounded-r cursor-pointer focus:outline-none">
+ 														<span class="mx-4 text-md font-thin">Add</span>
+ 													</button>
  												</div>
+												<table v-if="names.length" class="bg-gray-50 dark:bg-gray-800 shadow-md w-full grid grid-cols-1 divide-y divide-gray-200 dark:divide-black px-4 py-1 mt-1">
+													<tr v-for="(n,i) in names" :key="i">
+														<td class="flex flex-row items-center py-2 w-full">
+															<span class="h-full w-full flex-grow text-sm font-medium text-gray-500 align-center align-text-bottom">{{names[i]}}</span>
+															<button type="button" @click="names.splice(i, 1)" class="block ml-4 w-5 h-5 hover:bg-gray-300 rounded-md transition-colors duration-200 ease-in-out">
+																<svg xmlns="http://www.w3.org/2000/svg" class="fill-current text-gray-500" viewBox="0 0 20 20">
+																	<path fill-rule="evenodd"
+																		d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+																		clip-rule="evenodd"/>
+																</svg></button>
+														</td>
+													</tr>
+												</table>
  											</div>
+											<!-- Campaign Questions here -->
+											<!-- {{ campaignQuestions }} -->
+											<div v-if="campaignQuestions" class="col-span-4">
+												<FormulateForm class="col-span-4" v-model="values" :schema="campaignQuestions"/>
+											</div>
  										</div>
  									</div>
  								</div>
@@ -131,8 +151,7 @@
  								</div>
  							</div>
  						</div>
- 						<button v-if="personal_infoExpand == false"
- 							class="focus:outline-none block w-24 h-12 mx-auto rounded-full" @click="checkSection">
+ 						<button v-if="personal_infoExpand == false" class="focus:outline-none block w-24 h-12 mx-auto rounded-full" @click="checkSection">
  							<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 animate-bounce mx-auto" fill="none"
  								viewBox="0 0 24 24" stroke="currentColor">
  								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -141,12 +160,12 @@
  						</button>
  					</div>
  					<div v-else @click="contributionExpand = true" class=" hover:bg-gray-50 transition-colors duration-500 
-            text-2xl font-extralight text-gray-800 dark:text-gray-400 pl-4 py-6 rounded-lg">
+            text-2xl font-extralight text-gray-800 dark:text-gray-400 pl-4 py-4 rounded-lg">
  						Your Contribution
  					</div>
  					<!-- Border -->
  					<div class="hidden sm:block" aria-hidden="true">
- 						<div class="py-5">
+ 						<div class="py-4 mx-auto">
  							<div class="border-t border-gray-200" />
  						</div>
  					</div>
@@ -241,8 +260,7 @@
  								</div>
  							</div>
  						</div>
- 						<button v-if="communicationExpand == false" class="block w-24 h-12 mx-auto rounded-full"
- 							@click="checkSection">
+ 						<button v-if="communicationExpand == false" class="block w-24 h-12 mx-auto rounded-full" @click="checkSection">
  							<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 animate-bounce mx-auto" fill="none"
  								viewBox="0 0 24 24" stroke="currentColor">
  								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -251,13 +269,13 @@
  						</button>
  					</div>
  					<div v-else @click="personal_infoExpand = true" class=" hover:bg-gray-50 transition-colors duration-500 
-            text-2xl font-extralight text-gray-800 dark:text-gray-400 pl-4 py-6 rounded-lg">
+            text-2xl font-extralight text-gray-800 dark:text-gray-400 pl-4 py-4 rounded-lg">
  						Personal Info
  					</div>
 
  					<!-- Border -->
  					<div class="hidden sm:block" aria-hidden="true">
- 						<div class="py-5">
+ 						<div class="py-4 mx-auto">
  							<div class="border-t border-gray-200" />
  						</div>
  					</div>
@@ -314,20 +332,20 @@
  						</div>
  					</div>
  					<div v-else @click="communicationExpand = true" class=" hover:bg-gray-50 transition-colors duration-500 
-            text-2xl font-extralight text-gray-800 dark:text-gray-400 pl-4 py-6 rounded-lg">
+            text-2xl font-extralight text-gray-800 dark:text-gray-400 pl-4 py-4 rounded-lg">
  						Communication
  					</div>
  				</div>
 
  				<!-- Border -->
  				<div class="hidden sm:block" aria-hidden="true">
- 					<div class="py-5">
+ 					<div class="py-4 mx-auto">
  						<div class="border-t border-gray-200" />
  					</div>
  				</div>
 
  				<!-- Contribute Button -->
- 				<button type="submit" class="block flex flex-row btn-action mx-auto text-white
+ 				<button type="submit" class="flex flex-row btn-action mx-auto text-white
 				 		bg-green-500 dark:bg-green-600 hover:bg-green-600 duration-500" :class="{'bg-green-700': processing}">
 						<svg v-if="processing" class="h-6 w-8 mr-2 animate animate-spin" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
 							<circle cx="50" cy="50" r="45" fill="transparent"
@@ -338,7 +356,6 @@
  				</button>
 
  			</form>
-
  		</ClientOnly>
 
 
@@ -372,7 +389,8 @@ export default {
 			location: "",
 			campaign: "",
 			trees: 1,
-			names: [""],
+			names: [],
+			addName: "",
 			csr: false,
 			visit: false,
 			phone: "",
@@ -380,16 +398,18 @@ export default {
 			updates: false,
 			newsletter: false,
 			campaigns: null,
-			processing: false
+			processing: false,
+			values: {},
 		}
 	},
 	mounted() {
-		this.campaigns = this.$page.campaigns.edges.map(edge=> {
-			return {
-				name: edge.node.heading,
-				description: edge.node.subtitle,
-			}
-		})
+		this.campaigns = this.$page.campaigns.edges.map(e => e.node)
+		// this.campaigns = this.$page.campaigns.edges.map(edge=> {
+		// 	return {
+		// 		name: edge.node.heading,
+		// 		description: edge.node.subtitle,
+		// 	}
+		// })
 		if (this.fromCampaign?.length > 0) {
 			this.campaign = this.fromCampaign
 		} else {
@@ -405,23 +425,29 @@ export default {
 			}
 			
 			const change = newVal - oldVal
-			// CASE: one tree added
-			if (change === 1 && oldVal > 0) {
-				this.names.push("")
-				return
-			}
-
-			// CASE: trees changed completely 
-			while(this.names.length < newVal) {
-				// Trees were added, add blank fields
-				this.names.push("")
-			}
 			while(this.names.length > newVal) {
 				this.names.pop()
 			}
+			// // CASE: one tree added
+			// if (change === 1 && oldVal > 0) {
+			// 	this.names.push("")
+			// 	return
+			// }
+
+			// // CASE: trees changed completely 
+			// while(this.names.length < newVal) {
+			// 	// Trees were added, add blank fields
+			// 	this.names.push("")
+			// }
 		},
 	},
 	methods: {
+		addCurrentName: function() {
+			if(this.addName) {
+				this.names.push(this.addName)
+				this.addName = ''
+			}
+		},
 		checkAndSubmitForm: async function (e) {
 			e.preventDefault()
 
@@ -477,17 +503,31 @@ export default {
 		},
 	},
 	computed: {
+		completion: function() {
+			if(this.contributionFilled && this.personalInfoFilled) return 70;
+			if(this.contributionFilled && !this.personalInfoFilled) return 30;
+			return 5;
+		},
 		contributionFilled: function () {
 			return typeof this.trees === 'number' &&
 				this.trees > 0 &&
-				this.names?.length > 0 &&
-				this.campaign.name.length > 0
+				this.campaign?.name?.length > 0
 		},
 		personalInfoFilled: function () {
 			return this.first_name.length > 0 &&
 				this.last_name.length > 0 &&
-				typeof this.phone === "number"
+				typeof this.phone === "number" &&
 				this.email_address.length > 0
+		},
+		campaignQuestions: function() {
+			return this.campaign?.campaignQuestions?.map(question => {
+				return {
+					type: question.type.toLowerCase(),
+					name: question.name,
+					label: question.label,
+					help: question.help || null,
+				}
+			})
 		}
 	}
 }
@@ -499,8 +539,14 @@ query {
     edges {
       node {
         title
-        heading
-		subtitle
+        name:heading
+		description:subtitle
+		campaignQuestions {
+          label:text
+          type:inputType
+          help:description
+          name:questionName
+        }
       }
     }
   }
