@@ -14,10 +14,6 @@ function all(qSnap) {
 }
 
 function getRazorpayKey() {
-	if (FUNCTIONS_MOCKED) {
-		return 'rzp_test_od3yQVWQEML7Ta'
-	}
-
 	// for initial testing, this is still test key
 	// once ready for prod, make this the live key
 	return 'rzp_test_od3yQVWQEML7Ta'
@@ -45,6 +41,7 @@ async function verifyPayment(orderId_orig, response) {
 		// Fire serverless function to verify payment signature
 		let response = await axios.post(rzpEndpoint, verifyPayload)
 		if (!response?.data) { throw Error("Something went wrong") }
+		console.log(response.data)
 		valid = response.data.valid
 	}
 
@@ -90,7 +87,6 @@ export default {
 	async get(orderId) {
 		const docRef = doc(db, "donations", orderId);
 		const docSnap = await getDoc(docRef);
-		console.log("Firebase returned, ", docSnap)
 		if (docSnap.exists()) {
   			return docSnap.data()
 		} else {
@@ -98,7 +94,6 @@ export default {
 		}
 	},
 	async createOrder(formData) {
-
 		// Create order using serverless function
 		const { orderId, verifiedAmount, currency } = await createRazorpayOrder(formData)
 
@@ -115,12 +110,16 @@ export default {
 	async collectPayment(paymentData, successHandler, failureHandler) {
 		// create handler to verify payment and update paymentStatus in our database
 		const onPaymentSuccess = async (response) => { 
-			console.log("Successful payment from razorpay")
+			console.log("Success from razorpay", response)
 			const verifiedPayment = await verifyPayment(paymentData.orderId, response)
 			if (verifiedPayment) 
 				successHandler()
 			else 
-				failureHandler()
+				failureHandler("Payment could not be verified. Please reach out to customer support")
+		}
+
+		const onPaymentFailure = (response) => {
+			failureHandler(response.error.description)
 		}
 
 		const options = {
@@ -135,13 +134,17 @@ export default {
 		}
 
 		// Open razorpay global dialog to capture payment
-		if (Razorpay)
-			new Razorpay(options).open()
+		let rzp
+		if (Razorpay) {
+			rzp = new Razorpay(options).open()
+			rzp.on('payment.failed', onPaymentFailure);
+		}
 		else {
 			let razorpayCheckout = document.createElement('script')
 			razorpayCheckout.setAttribute('src', RAZORPAY_CHECKOUT_URI)
 			document.head.appendChild(razorpayCheckout)
-			new Razorpay(options).open()
+			rzp = new Razorpay(options).open()
+			rzp.on('payment.failed', onPaymentFailure);
 		}
 	},
 	async update() {

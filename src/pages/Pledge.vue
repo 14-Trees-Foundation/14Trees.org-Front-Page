@@ -400,6 +400,7 @@ export default {
 			campaigns: null,
 			processing: false,
 			values: {},
+			error: {}
 		}
 	},
 	mounted() {
@@ -458,7 +459,6 @@ export default {
 				return
 			}
 
-			this.processing = true
 			const formData = {
 				first_name: this.first_name,
 				last_name: this.last_name,
@@ -478,15 +478,17 @@ export default {
 					newsletter: this.newsletter
 				}
 			}
+			this.processing = true
 			try {
 				const orderId = await Repository.donation.createOrder(formData)
-				this.processing = false 
 				if (orderId !== null) {
 					this.$router.push('/checkout/' + orderId)
 				}
 			} catch (err) {
 				console.error(err)
+				this.error = err
 			}
+			this.processing = false 
 		},
 		checkSection: function (e) {
 			if (!process.isClient) {

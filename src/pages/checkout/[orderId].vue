@@ -117,7 +117,8 @@ export default {
 		},
 		sanitize: function (data) {
 			if (data instanceof Array) {
-				return data.reduce((res, cur) => res + ", " + this.sanitize(cur))
+				if (data.length)
+					return data.reduce((res, cur) => res + ", " + this.sanitize(cur))
 			}
 			if (typeof data === "string" || data instanceof String) {
 				return data.split('_').join(' ')
@@ -135,27 +136,21 @@ export default {
 				email_id: this.details.email_id
 			}
 			try {
-				await Repository.donation.collectPayment(
-					paymentDetails,
-					() => { 
-						// On Success
+				await Repository.donation.collectPayment( paymentDetails,
+					() => { // On Success
 						console.log("Payment Successful")
 						this.loadOrder()
-						this.processing = false
 					},
-					() => { 
-						// On Failure
-						this.processing = false
-						console.log("Payment Failed")
-						alert("Something went wrong.")
+					(reason) => { // On Failure
+						console.log("Payment Failed", reason)
+						alert(reason)
 					 },
 				)
-				this.processing = false
 			} catch(err) {
 				console.error(err)
 				alert("Something went wrong.")
-				this.processing = false
 			}
+			this.processing = false
 		}
 	}
 };

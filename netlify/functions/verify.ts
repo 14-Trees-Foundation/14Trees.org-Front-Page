@@ -13,6 +13,7 @@ function checkValidity(payment: PaymentBody) {
     // Only for initial testing
     // Verify signature using sha256 hash
     // More info here: https://razorpay.com/docs/payment-gateway/web-integration/custom/#step-5-verify-the-signature
+    console.log(payment)
 
     return payment.orderId_orig === payment.orderId_checkout
 }
