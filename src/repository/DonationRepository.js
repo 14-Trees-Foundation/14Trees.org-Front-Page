@@ -1,6 +1,6 @@
 import db from "~/repository/db/firebaseInit";
 import {  doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
-import axios from "axios";
+// import axios from "axios";
 
 const RAZORPAY_CHECKOUT_URI="https://checkout.razorpay.com/v1/checkout.js"
 const FUNCTIONS_MOCKED = false

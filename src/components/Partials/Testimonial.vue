@@ -86,7 +86,7 @@
 
 <script>
 import Person from './Person';
-import LargeModal from './LargeModal';
+import LargeModal from '../Modal/LargeModal';
 import FullTestimonial from './FullTestimonial';
 import { imgSrc } from '@/utils';
 

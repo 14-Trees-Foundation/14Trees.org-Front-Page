@@ -345,7 +345,7 @@
  				</div>
 
  				<!-- Contribute Button -->
- 				<button type="submit" class="flex flex-row btn-action mx-auto text-white
+ 				<button type="submit" class="flex flex-row btn-action mx-auto text-white w-64
 				 		bg-green-500 dark:bg-green-600 hover:bg-green-600 duration-500" :class="{'bg-green-700': processing}">
 						<svg v-if="processing" class="h-6 w-8 mr-2 animate animate-spin" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
 							<circle cx="50" cy="50" r="45" fill="transparent"
@@ -356,9 +356,12 @@
  				</button>
 
  			</form>
+			 <modal :showModal="openConfirmation" @close="openConfirmation = false">
+				 <div class="">
+					<order-summary :orderId="orderId" rounded/>
+				 </div>
+			 </modal>
  		</ClientOnly>
-
-
  		<form ref="payButton"> </form>
  	</div>
 	        </div>
@@ -368,8 +371,11 @@
 
  <script>
 import Repository from "@/repository/RepositoryFactory";
+import Modal from '../components/Modal/Modal.vue';
+import OrderSummary from '../components/Partials/OrderSummary.vue';
 
 export default {
+    components: { Modal, OrderSummary },
 	metaInfo() {
 		return {
 			title: "Pledge"
@@ -400,7 +406,9 @@ export default {
 			campaigns: null,
 			processing: false,
 			values: {},
-			error: {}
+			error: {},
+			openConfirmation: false,
+			orderId: null
 		}
 	},
 	mounted() {
@@ -429,17 +437,6 @@ export default {
 			while(this.names.length > newVal) {
 				this.names.pop()
 			}
-			// // CASE: one tree added
-			// if (change === 1 && oldVal > 0) {
-			// 	this.names.push("")
-			// 	return
-			// }
-
-			// // CASE: trees changed completely 
-			// while(this.names.length < newVal) {
-			// 	// Trees were added, add blank fields
-			// 	this.names.push("")
-			// }
 		},
 	},
 	methods: {
@@ -480,9 +477,11 @@ export default {
 			}
 			this.processing = true
 			try {
-				const orderId = await Repository.donation.createOrder(formData)
-				if (orderId !== null) {
-					this.$router.push('/checkout/' + orderId)
+				// const orderId = await Repository.donation.createOrder(formData)
+				this.orderId = "order_I1YE0GASVEQAfD"
+				if (this.orderId !== null) {
+					// this.$router.push('/checkout/' + orderId)
+					this.openConfirmation = true
 				}
 			} catch (err) {
 				console.error(err)
