@@ -56,6 +56,7 @@ module.exports = {
     ContentfulCampaign: '/projects/:title',
     ContentfulContentPage: '/:title',
     ContentfulBlogPost: '/blogs/:slug',
+    ContentfulEventSite: '/event/:slug',
   },
   chainWebpack: config => {
       config.resolve.alias.set('@pageImage', '@/assets/images');

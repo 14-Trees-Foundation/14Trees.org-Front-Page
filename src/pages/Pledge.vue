@@ -408,7 +408,7 @@ export default {
 			values: {},
 			error: {},
 			openConfirmation: false,
-			orderId: null
+			orderId: "order_I1YE0GASVEQAfD" // for testing only. init as null
 		}
 	},
 	mounted() {
@@ -477,16 +477,19 @@ export default {
 			}
 			this.processing = true
 			try {
-				// const orderId = await Repository.donation.createOrder(formData)
-				this.orderId = "order_I1YE0GASVEQAfD"
+				if (this.orderId === null) {
+					this.orderId = await Repository.donation.createOrder(formData)
+				}
 				if (this.orderId !== null) {
-					// this.$router.push('/checkout/' + orderId)
-					this.openConfirmation = true
+					await Repository.donation.updateOrder(this.orderId, formData)
+					// this.$router.push('/checkout/' + orderId) // @deprecated
 				}
 			} catch (err) {
 				console.error(err)
 				this.error = err
 			}
+
+			this.openConfirmation = true
 			this.processing = false 
 		},
 		checkSection: function (e) {

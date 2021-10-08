@@ -1,7 +1,7 @@
 <template>
     <section>
         <h3 v-if="showHeadline" class="md:text-3xl text-center md:p-2 px-4 text-gray-600 font-light dark:text-gray-300">{{headline}}</h3>
-        <div class="mx-auto grid md:grid-cols-6 grid-cols-8 md:gap-4 flex items-center">
+        <div class="mx-auto grid md:grid-cols-6 grid-cols-8 md:gap-4 items-center">
             <!-- Prev Button -->
             <div class="col-span-1 flex justify-end">
                 <button class="hover:shadow-lg rounded-full md:w-24 md:h-24 w-6 h-6 btn-action duration-300 focus:outline-none md:text-4xl font-light text-gray-400"
@@ -10,7 +10,7 @@
 
             <!-- Active Slide -->
             <div class="md:col-span-4 col-span-6 relative overflow-hidden pb-3/4 bg-gray-300" v-lazy-container="{ selector: 'img' }">
-                <!-- <div class="absolute w-full h-full block flex items-center justify-center">
+                <!-- <div class="absolute w-full h-full flex items-center justify-center">
                     <svg class="animate-spin h-60 w-60 stroke-current stroke-3 text-green-600" viewBox="0 0 100 100">
                         <path d="M0,50 a1,1 0 0,0 97,0" fill="transparent" />
                     </svg> 
