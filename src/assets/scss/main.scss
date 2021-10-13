@@ -225,6 +225,27 @@ h6, .h6 {
     @apply scale-101;
   }
 
+  table.floating-rows-table {
+      border-collapse: separate;
+      border-spacing: 0em 0.5em;
+
+      td {
+        border-right-style: none;
+      }
+
+      td:first-child {
+        border-right-style: none;
+        border-top-left-radius: 10px;
+        border-bottom-left-radius: 10px;
+      }
+
+      td:last-child {
+        border-right-style: none;
+        border-bottom-right-radius: 10px;
+        border-top-right-radius: 10px;
+      }
+  }
+
   .input-field {
     @apply w-full block;
     @apply py-1 px-3 leading-8 text-base outline-none transition-colors duration-200 ease-in-out rounded border;

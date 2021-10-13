@@ -27,9 +27,12 @@ module.exports = {
         height: ['hover', 'focus']
       },
       colors: {
+        'dark-green': 'hsl(136deg 27% 17%)',
+        'light-green': 'hsl(78deg 62% 53%)',
         'dark-grey': '#1b1f23',
         'darker-grey': '#181d21',
         'darkish-grey': '#16191c',
+        'warm-light-grey': 'hsl(80deg 7% 92%)',
         'primary-green': {
           1 : '#1b1f23',
           2 : '#9acd9a',

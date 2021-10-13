@@ -8,7 +8,6 @@ module.exports = {
   siteName: '14 Trees Foundation',
   siteDescription: "14 Trees Foundation is a charitable organization dedicated to building sustainable, carbon-footprint-neutral eco-systems through re-forestation",
   plugins: [
-    // { use: 'gridsome-plugin-typescript' },
     {
       use: '@gridsome/source-contentful',
       options: {
@@ -54,7 +53,6 @@ module.exports = {
   ],
   templates: {
     ContentfulCampaign: '/projects/:title',
-    ContentfulContentPage: '/:title',
     ContentfulBlogPost: '/blogs/:slug',
     ContentfulEventSite: '/event/:slug',
   },
