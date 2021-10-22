@@ -226,23 +226,32 @@ h6, .h6 {
   }
 
   table.floating-rows-table {
+      $border-radius: 6px;
       border-collapse: separate;
-      border-spacing: 0em 0.5em;
+      border-spacing: 0em 1em;
+
+      th {
+        border-right-style: none;
+        @apply pl-3 py-2 whitespace-nowrap;
+      }
 
       td {
         border-right-style: none;
+        @apply pl-3 py-6 whitespace-nowrap;
       }
 
-      td:first-child {
+      td:first-child,th:first-child {
+        @apply md:pl-12;
         border-right-style: none;
-        border-top-left-radius: 10px;
-        border-bottom-left-radius: 10px;
+        border-top-left-radius: $border-radius;
+        border-bottom-left-radius: $border-radius;
       }
 
-      td:last-child {
+      td:last-child, th:last-child {
+        @apply md:pr-12;
         border-right-style: none;
-        border-bottom-right-radius: 10px;
-        border-top-right-radius: 10px;
+        border-bottom-right-radius: $border-radius;
+        border-top-right-radius: $border-radius;
       }
   }
 

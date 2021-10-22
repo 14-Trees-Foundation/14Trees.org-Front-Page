@@ -5,7 +5,6 @@
     <div class="flex-grow">
       <slot/>
     </div>
-    <v-footer></v-footer>
   </div>
 </template>
 

@@ -27,10 +27,12 @@ module.exports = {
         height: ['hover', 'focus']
       },
       colors: {
-        'dark-green': 'hsl(136deg 27% 17%)',
+        'dark-green': '#1F3625',
         'light-green': 'hsl(78deg 62% 53%)',
         'dark-grey': '#1b1f23',
         'darker-grey': '#181d21',
+        'mud-brown': '#967A63',
+        'mud-grey': '#AB9E8D',
         'darkish-grey': '#16191c',
         'warm-light-grey': 'hsl(80deg 7% 92%)',
         'primary-green': {
@@ -93,12 +95,17 @@ module.exports = {
         '100': '1'
       }
     },
+    flexGrow: {
+      '0': 0,
+      DEFAULT: 1, 
+      '2': 2
+    },
     fontFamily: {
       sans: [
+        '"Helvetica Neue"',
         '"Source Sans Pro"',
         '"Segoe UI"',
         'Roboto',
-        '"Helvetica Neue"',
         'Arial',
         '"Noto Sans"',
         'sans-serif',
