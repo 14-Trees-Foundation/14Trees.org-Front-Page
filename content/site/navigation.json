@@ -74,8 +74,8 @@
       ]
     },
     {
-      "name": "Pledge Now!",
-      "link": "/pledge",
+      "name": "Contribute",
+      "link": "/contribute",
       "external": false 
     },
     {

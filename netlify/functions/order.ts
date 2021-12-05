@@ -2,7 +2,6 @@ import Razorpay from 'razorpay';
 import { Handler } from "@netlify/functions";
 import { type } from 'os';
 
-// type Order = { "id": "order_DaZlswtdcn9UNV", "entity": "order", "amount": 50000, "amount_paid": 0, "amount_due": 50000, "currency": "INR", "receipt": "Receipt #20", "status": "created", "attempts": 0, "notes": [], "created_at": 1572502745 }
 
 type ResponseBody = {
     orderId: string,
@@ -16,6 +15,7 @@ type ResponseBody = {
 }
 
 type FormData = {
+    orderId: string,
     first_name: string,
     last_name: string,
     email_id: string,
@@ -31,7 +31,7 @@ type FormData = {
     newsletter: boolean
 }
 
-const getRZPInstance = () => { 
+function getRZPInstance() { 
     return new Razorpay({
         key_id: 'rzp_test_od3yQVWQEML7Ta',
         key_secret: 'qUAtQnTyukmFQY6fuB1dh5iV'
@@ -39,7 +39,7 @@ const getRZPInstance = () => {
 }
 
 const handler: Handler = async (event, context) => {
-    const formData:FormData = JSON.parse(event.body)
+    const formData :FormData = JSON.parse(event.body)
     const orderNotes = { trees: formData.trees }
 
     let amount = formData.trees * 350000
@@ -51,17 +51,36 @@ const handler: Handler = async (event, context) => {
     const instance = getRZPInstance()
     let responseBody: ResponseBody = null
 
-    await instance.orders.create(options, function (err, order) {
-        if (err) console.log(err)
-        if (order) {
-            console.log(order)
-            responseBody = { 
-                orderId: order.id, 
-                verifiedAmount: amount, 
-                currency: options.currency, 
+    if (! formData.orderId) {
+        await instance.orders.create(options, function (err, order) {
+            if (err) console.log(err)
+            if (order) {
+                console.log(order)
+                responseBody = { 
+                    orderId: order.id, 
+                    verifiedAmount: amount, 
+                    currency: options.currency, 
+                }
             }
+        });
+    } else {
+        try {
+            let order = await instance.orders.fetch(formData.orderId)
+            if (order) {
+                if (order) {
+                    console.log(order)
+                    responseBody = { 
+                        orderId: order.id, 
+                        verifiedAmount: amount, 
+                        currency: options.currency, 
+                    }
+                }
+            };
+        } catch (err) {
+            console.log(err)
         }
-    });
+    }
+
 
     // TODO: formData to firestore incl orderId
     return {

@@ -1,22 +1,11 @@
- <template>
-     <Layout>
-        <div class="container full-page-generic">
-            <h1 class="title-text"> Pledge Now</h1>
-            <div class="mx-4 md:pt-16">
- 				<div>
+<template>
+ 		<div>
+    		<div class="mb-24">
+			<ProgressCheckPoints :keys="['Contribution', 'Information', 'Communication', 'Payment']" :activeIndex="form_stage"/>
+		</div>
 
  		<ClientOnly>
  			<form action="#" method="POST" id="pledgeForm" @submit="checkAndSubmitForm" class="mt-18 md:ml-12 md:mb-32 mb-12">
-				<div class="hidden sm:block" aria-hidden="true">
-					<div v-show="false" class="relative pt-1 mx-auto w-11/12">
-						<div class="overflow-hidden h-2 mb-8 text-xs flex rounded bg-gray-200">
-							<div :style="`width:${completion}%`" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-green-500"></div>
-						</div>
-					</div>
-					<div class="py-4 mx-auto">
-						<div class="border-t border-gray-200" />
-					</div>
-				</div>
  				<div id="contribution" class=" h-full transition-height duration-500 ease-in-out">
  					<!-- ******************************************************** -->
  					<!-- ****************** Contribution ************************-->
@@ -43,30 +32,34 @@
  													<option v-for="(c,i) in campaigns" :key="i" :value="c">{{c.name}}
  													</option>
  												</select>
-												 <p class="text-gray-600 text-sm font-light p-4" v-if="campaign.description">{{campaign.description}}</p>
+												 <div class="border rounded-md mt-2" v-if="campaign.description">
+													 <p class="text-gray-600 text-sm font-light p-4">{{campaign.description}}</p>
+												 </div>
  											</div>
 
  											<div class="col-span-4">
  												<label for="last_name" class="block text-sm font-medium text-gray-700">Number of Trees</label>
- 												<div class="flex flex-row w-full h-11 border-gray-300 border rounded">
- 													<button type="button" @click="trees--" class="transition-colors duration-200 ease-in-out flex-grow bg-gray-100 text-gray-600  hover:bg-red-300 h-full rounded-l cursor-pointer  focus:outline-none">
+ 												<div v-if="orderId == null" class="flex flex-row w-full h-11 border-gray-300 border rounded">
+ 													<button type="button" @click="trees--" class="mr-0.5 border-r transition-colors duration-200 ease-in-out flex-grow bg-gray-100 text-gray-600  hover:bg-red-300 h-full rounded-l cursor-pointer  focus:outline-none">
  														<span class="m-auto text-2xl font-thin">−</span>
  													</button>
- 													<input type="number" v-model.number="trees" min="1" class="w-2/3 flex-grow appearance-none input-field border-none rounded-none"/>
- 													<button type="button" @click="trees++" class="transition-colors duration-200 ease-in-out flex-grow bg-gray-100 text-gray-600  hover:bg-green-400 h-full rounded-r cursor-pointer focus:outline-none">
+ 													<input type="number" :disabled="orderId !== null" v-model.number="trees" min="1" class="w-2/3 flex-grow appearance-none input-field border-none rounded-none"/>
+ 													<button type="button" @click="trees++" class="ml-1 border-l transition-colors duration-200 ease-in-out flex-grow bg-gray-100 text-gray-600  hover:bg-green-400 h-full rounded-r cursor-pointer focus:outline-none">
  														<span class="m-auto text-2xl font-thin">+</span>
  													</button>
  												</div>
+												 <span v-else class="input-field text-gray-500 inline-flex items-center">
+													<span class="pl-1 pr-4 border-r"> {{trees}} </span>
+          											<font-awesome class="text-gray-300 mx-4" :icon="['fas', 'lock']"></font-awesome>
+													<span class="text-xs text-gray-400"> Please make a separate contribution to edit this field</span>
+												 </span>
  											</div>
 
  											<div v-if="trees > 0" class="col-span-4">
  												<label for="name-add" class="block text-sm font-medium text-gray-700">Add upto {{trees}} names</label>
- 												<div class="flex flex-row w-full h-11 border-gray-300">
-													<!-- <div class="text-xl font-medium text-gray-500 p-2 max-w-12 h-full whitespace-nowrap">
-														<span class="text-gray-400">{{names.length}}</span> / <span>{{trees}}</span>
-													</div> -->
- 													<input type="text" v-model="addName" name="name-add" id="name-add" autocomplete="off" class="input-field flex-grow max-w-2/3 rounded-none rounded-l"/>
- 													<button :disabled="names.length >= trees" type="button" @click="addCurrentName()" class="transition-colors duration-200 ease-in-out bg-gray-100 text-gray-600  hover:bg-green-400 h-full rounded-r cursor-pointer focus:outline-none">
+ 												<div class="flex flex-row w-full h-11 border-gray-300 border rounded">
+ 													<input type="text" v-model="addName" name="name-add" id="name-add" autocomplete="off" class="input-field flex-grow max-w-2/3 border-none rounded-none rounded-l"/>
+ 													<button :disabled="names.length >= trees" type="button" @click="addCurrentName()" class="ml-0.5 border-l rounded-r transition-colors duration-200 ease-in-out bg-gray-100 text-gray-600  hover:bg-green-400 h-full cursor-pointer focus:outline-none">
  														<span class="mx-4 text-md font-thin">Add</span>
  													</button>
  												</div>
@@ -224,13 +217,12 @@
 
  											<div class="col-span-6 sm:col-span-3">
  												<label for="country"
- 													class="block text-sm font-medium text-gray-700">Country /
- 													Region</label>
+ 													class="block text-sm font-medium text-gray-700">Country / Region (Currency)</label>
  												<select id="country" v-model="location" name="country"
  													autocomplete="country"
  													class="input-field">
- 													<option>India</option>
- 													<option>United States</option>
+ 													<option>India (INR)</option>
+ 													<option>United States (USD)</option>
  													<option>Other</option>
  												</select>
  											</div>
@@ -357,35 +349,30 @@
 
  			</form>
 			 <modal :showModal="openConfirmation" @close="openConfirmation = false">
-				 <div class="">
+				 <div class="mx-auto">
 					<order-summary :orderId="orderId" rounded/>
 				 </div>
 			 </modal>
  		</ClientOnly>
  		<form ref="payButton"> </form>
  	</div>
-	        </div>
-        </div>
-    </Layout>
 </template>
 
- <script>
+<script>
+
 import Repository from "@/repository/RepositoryFactory";
-import Modal from '../components/Modal/Modal.vue';
-import OrderSummary from '../components/Partials/OrderSummary.vue';
+import Modal from '../Modal/Modal.vue';
+import OrderSummary from './OrderSummary.vue';
+import ProgressCheckPoints from './ProgressCheckPoints.vue';
 
 export default {
-    components: { Modal, OrderSummary },
-	metaInfo() {
-		return {
-			title: "Pledge"
-		};
-	},
+    components: { Modal, OrderSummary, ProgressCheckPoints },
 	props: {
 		fromCampaign: ""
 	},
 	data: function () {
 		return {
+			loaded: false,
 			contributionExpand: true,
 			communicationExpand: false,
 			personal_infoExpand: false,
@@ -408,12 +395,14 @@ export default {
 			values: {},
 			error: {},
 			openConfirmation: false,
-			orderId: "order_I1YE0GASVEQAfD" // for testing only. init as null
+			orderId: null, // for testing only. init as null
+			// orderId: "order_I1YE0GASVEQAfD" // for testing only. init as null
 		}
 	},
 	mounted() {
-		this.campaigns = this.$page.campaigns.edges.map(e => e.node)
-		// this.campaigns = this.$page.campaigns.edges.map(edge=> {
+		this.loaded = false;
+		this.campaigns = this.$static.campaigns.edges.map(e => e.node)
+		// this.campaigns = this.$static.campaigns.edges.map(edge=> {
 		// 	return {
 		// 		name: edge.node.heading,
 		// 		description: edge.node.subtitle,
@@ -424,6 +413,10 @@ export default {
 		} else {
 			this.campaign = this.campaigns[0]
 		}
+		if (this.orderId) {
+			this.loadOrder()
+		}
+		this.loaded = true;
 	},
 	watch: {
 		trees: function(newVal, oldVal) {
@@ -440,6 +433,26 @@ export default {
 		},
 	},
 	methods: {
+		async loadOrder() {
+			let orderDetails = await Repository.donation.get(this.orderId)
+			console.log(orderDetails)
+			this.first_name = orderDetails.first_name;
+			this.last_name = orderDetails.last_name;
+			this.phone = orderDetails.phone;
+			this.email_address = orderDetails.email_id;
+			this.campaign = orderDetails.campaign;
+			this.names = orderDetails.names;
+
+			this.volunteer = orderDetails.interest.volunteer;
+			this.csr = orderDetails.interest.csr;
+			this.visit = orderDetails.interest.visit;
+
+			this.newsletter = orderDetails.notifications.newsletter;
+			this.updates = orderDetails.notifications.updates;
+
+			this.location = orderDetails.location
+			this.trees = orderDetails.trees
+		},
 		addCurrentName: function() {
 			if(this.addName) {
 				this.names.push(this.addName)
@@ -477,13 +490,7 @@ export default {
 			}
 			this.processing = true
 			try {
-				if (this.orderId === null) {
-					this.orderId = await Repository.donation.createOrder(formData)
-				}
-				if (this.orderId !== null) {
-					await Repository.donation.updateOrder(this.orderId, formData)
-					// this.$router.push('/checkout/' + orderId) // @deprecated
-				}
+				this.orderId = await Repository.donation.createOrder(formData, this.orderId)
 			} catch (err) {
 				console.error(err)
 				this.error = err
@@ -507,10 +514,14 @@ export default {
 		},
 	},
 	computed: {
-		completion: function() {
-			if(this.contributionFilled && this.personalInfoFilled) return 70;
-			if(this.contributionFilled && !this.personalInfoFilled) return 30;
-			return 5;
+		form_stage: function() {
+			if(this.orderId !== null && this.orderId.length && this.contributionFilled && this.personal_infoExpand && this.personalInfoFilled && this.communicationExpand)
+				return 3;
+			if(this.contributionFilled && this.personal_infoExpand && this.personalInfoFilled)
+				return 2;
+			if(this.contributionFilled && this.personal_infoExpand && !this.personalInfoFilled)
+				return 1;
+			return 0;
 		},
 		contributionFilled: function () {
 			return typeof this.trees === 'number' &&
@@ -537,7 +548,7 @@ export default {
 }
 </script>
 
-<page-query>
+<static-query>
 query {
   campaigns: allContentfulCampaign {
     edges {
@@ -555,4 +566,4 @@ query {
     }
   }
 }
-</page-query>
+</static-query>

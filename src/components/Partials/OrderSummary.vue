@@ -1,20 +1,26 @@
 <template>
     <div v-if="loaded" class="flex flex-wrap">
-        <div class="flex-grow sm:mt-0 mx-auto md:w-2/3 w-full py-8 px-8 dark:bg-black bg-white flex flex-col" :class="{'md:rounded-l-2xl': rounded}">
+        <div class="flex-grow sm:mt-0 mx-auto md:w-2/3 w-full py-8 px-8 dark:bg-black bg-white flex flex-col" :class="{'md:rounded-l-2xl': rounded, 'md:rounded-r-2xl': rounded && paymentCaptured}">
 			<div class="">
 				<template v-if="paymentCaptured">
 					<div class="text-2xl md:text-3xl font-normal text-gray-800 flex">
 						<span class="mr-4">Your Order Confirmation</span>
-						<svg  xmlns="http://www.w3.org/2000/svg" class="animate-pulse h-10 w-10 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+						<font-awesome :icon="['fas', 'check']" class="text-green-500 border-2 rounded-full p-1 animate-pulse h-10 w-10 my-auto"></font-awesome>
+						<!-- <svg  xmlns="http://www.w3.org/2000/svg" class=" text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
 								d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
-						</svg>
+						</svg> -->
 					</div>
 				</template>
-				<template v-else>
-					<p class="block w-full text-2xl md:text-3xl font-normal text-gray-800">Confirm Your Order</p>
-					<p class="w-full text-md md:text-xl font-thin">Reference ID : <a class="text-blue-700" :href="orderLink">{{orderId.replace('order_', '')}}</a></p>
-				</template>
+				<div v-else class="flex">
+					<div class="block">
+						<p class="block w-full text-2xl md:text-3xl font-normal text-gray-800">Confirm Your Order</p>
+						<p class="w-full text-md md:text-xl font-thin">Reference ID : <a class="text-blue-700" :href="orderLink">{{orderId.replace('order_', '')}}</a></p>
+					</div>
+					<button @click="edit" class="block md:text-xl items-center rounded ml-auto md:pl-4 border hover:shadow-md transition-shadow duration-200 ease-in-out">
+						<span class="md:contents hidden text-lg md:font-medium text-gray-700">Edit</span>
+						<font-awesome class="text-gray-500 mx-4" :icon="['fas', 'edit']"></font-awesome>
+					</button>
+				</div>
 
 				<!-- Border -->
 				<div class="py-6 mx-auto">
@@ -99,7 +105,8 @@ export default {
 			razorpayCheckout.setAttribute('src', RAZORPAY_CHECKOUT_URI)
 			// razorpayCheckout.async = true
 			document.head.appendChild(razorpayCheckout)
-			this.orderLink = window.location.href
+			this.orderLink = window.location.origin + '/checkout/' + this.orderId
+			console.log(this.orderLink)
 		}
 	},
 	methods: {
@@ -129,6 +136,7 @@ export default {
 			if (data instanceof Array) {
 				if (data.length)
 					return data.reduce((res, cur) => res + ", " + this.sanitize(cur))
+				else return "-"
 			}
 			if (typeof data === "string" || data instanceof String) {
 				return data.split('_').join(' ')
@@ -161,6 +169,15 @@ export default {
 				alert("Something went wrong.")
 			}
 			this.processing = false
+		},
+		edit: function() {
+			this.$router.push({
+				name: 'donation-edit',
+				params: {
+					id: this.orderId
+				}
+			})
+
 		}
 	}
 }

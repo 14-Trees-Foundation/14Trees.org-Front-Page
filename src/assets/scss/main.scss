@@ -228,7 +228,7 @@ h6, .h6 {
   .input-field {
     @apply w-full block;
     @apply py-1 px-3 leading-8 text-base outline-none transition-colors duration-200 ease-in-out rounded border;
-    @apply bg-white border-gray-300 focus:border-green-700 focus:ring-green-500 text-gray-700;
+    @apply bg-white border-gray-300 focus:border-green-600 focus:ring-green-500 focus:ring-2 text-gray-700;
     @apply dark:bg-dark-grey dark:text-gray-100 dark:border-gray-700;
     // @apply dark:focus:border-indigo-500 dark:focus:ring-2 dark:focus:ring-indigo-900;
   }
@@ -648,7 +648,8 @@ pre[class*="language-"]>code[class*="language-"] {
 
     .formulate-input-help {
       // Global help text styles
-      @apply block text-xs font-normal text-gray-600;
+      @apply block text-xs font-normal text-gray-500 leading-relaxed;
+      @apply mt-2 p-2 border rounded-md;
     }
 
     .formulate-input-errors {

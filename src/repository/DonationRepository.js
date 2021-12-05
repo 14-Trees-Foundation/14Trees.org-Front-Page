@@ -1,6 +1,6 @@
 import db from "~/repository/db/firebaseInit";
 import {  doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
-// import axios from "axios";
+import axios from "axios";
 
 const RAZORPAY_CHECKOUT_URI="https://checkout.razorpay.com/v1/checkout.js"
 const FUNCTIONS_MOCKED = false
@@ -13,10 +13,15 @@ function all(qSnap) {
 	return docs
 }
 
-function getRazorpayKey() {
+function getRazorpayKey(mode = 'test') {
 	// for initial testing, this is still test key
 	// once ready for prod, make this the live key
-	return 'rzp_test_od3yQVWQEML7Ta'
+	if (mode === 'test')
+		return 'rzp_test_od3yQVWQEML7Ta'
+	if (mode === 'terre')
+		return 'rzp_live_suDBmsBep11zB3'
+	if (mode === 'live')
+		return 'rzp_live_xxxxxxxxxxxxxx'
 }
 
 function createCallbackUrl(orderId) {
@@ -56,8 +61,8 @@ async function verifyPayment(orderId_orig, response) {
 	return valid
 }
 
-async function createRazorpayOrder(formData) {
-	const rzpEndpoint = "/.netlify/functions/order"
+async function createRazorpayOrder(formData, orderId = null) {
+	const createOrderEndpoint = "/.netlify/functions/order"
 	if (FUNCTIONS_MOCKED) {
 	 	return { 
 			orderId: "order_HIJ5xzCQtqR6O3",
@@ -72,9 +77,8 @@ async function createRazorpayOrder(formData) {
 		}
 	}
 	else {
-
 		// Production create order from function
-		const order = await axios.post(rzpEndpoint, formData)
+		const order = await axios.post(createOrderEndpoint, {orderId, ...formData})
 		if (! order?.data?.orderId) { 
 			throw Error("Something went wrong") 
 		}
@@ -93,9 +97,9 @@ export default {
 			return null
 		}
 	},
-	async createOrder(formData) {
+	async createOrder(formData, updateOrderId = null) {
 		// Create order using serverless function
-		const { orderId, verifiedAmount, currency } = await createRazorpayOrder(formData)
+		const { orderId, verifiedAmount, currency } = await createRazorpayOrder(formData, updateOrderId)
 
 		// Mark payment as false and store data in our database even before payment
 		formData.paymentCaptured = false
@@ -146,8 +150,5 @@ export default {
 			rzp = new Razorpay(options).open()
 			rzp.on('payment.failed', onPaymentFailure);
 		}
-	},
-	async update() {
-
-	},
+	}
 };
