@@ -10,6 +10,6 @@
 
 [[redirects]]
   from = "/checkout/*"
-  # to = "/checkout/_order_id.html"
+  to = "/checkout/_order_id.html"
   status = 200
   force = true
