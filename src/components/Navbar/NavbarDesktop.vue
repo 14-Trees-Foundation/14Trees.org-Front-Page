@@ -1,7 +1,7 @@
 <template>
 	<nav
 		class="hidden md:block lg:block xl:block flex items-center justify-between flex-wrap container mx-auto py-3 z-20 dark:text-gray-400 dark:bg-dark-grey">
-		<div class="block flex-grow flex items-center w-auto mx-4">
+		<div class="block flex-grow flex items-center w-auto mx-4 py-1">
 			<div class="block flex items-center w-auto mx-6">
 				<div class="flex items-center flex-shrink-0 mr-3">
 					<span class="font-semibold text-xl tracking-tight">{{ $static.metadata.siteName }}</span>
@@ -11,7 +11,7 @@
 				</div>
 			</div>
 			<div class="flex-grow pl-3 md:border-l md:border-gray-400 text-black dark:text-gray-400">
-				<ul class="list-none flex justify-left ">
+				<ul class="list-none flex justify-left">
 					<li v-for="navItem in getNavItems" :key="navItem.name" class="px-4 py-1">
 						<g-link class="block py-1" :to="navItem.link" :title="navItem.name"
 							v-if="navItem.external!=true && navItem.children.length <=0">{{ navItem.name}}</g-link>
@@ -63,19 +63,28 @@
 							</Popover>
 						</ClientOnly>
 					</li>
+					<li class="flex flex-grow justify-end">
+						<button type="submit" class="flex flex-row btn-action text-white h-10
+				 		bg-green-500 dark:bg-green-600 hover:bg-green-600 duration-500">
+ 						<g-link to="/contribute" class="text-md flex">
+						 <div> <g-image src="~/assets/images/Planting.svg" class="w-4 mr-2 mt-1"></g-image> </div>
+						 <span>Contribute</span>
+						 </g-link>
+ 						</button>
+					</li>
 				</ul>
 			</div>
 
-			<div class="inline-block">
+			<!-- <div class="inline-block">
 				<ul class="list-none flex justify-center md:justify-end">
-					<!-- <li class="mr-6">
+					<li class="mr-6">
               <search-button v-on="$listeners"></search-button>
-            </li> -->
+            </li>
 					<li>
 						<theme-switcher v-on="$listeners" :theme="theme" />
 					</li>
 				</ul>
-			</div>
+			</div> -->
 		</div>
 	</nav>
 </template>

@@ -6,6 +6,7 @@ const colors = require('tailwindcss/colors')
 
 module.exports = {
   darkMode: 'class',
+  mode: 'jit',
   purge: {
     content:["./src/**/*.html", "./src/**/*.vue", "./src/**/*.jsx"],
     options: {
@@ -61,6 +62,12 @@ module.exports = {
         '1/4-screen': '25vh',
         '1/2-screen': '50vh',
         '3/4-screen': '75vh',
+      },
+      maxWidth: {
+        '0': '0',
+        '1/4-screen': '25vw',
+        '1/2-screen': '50vw',
+        '3/4-screen': '75vw',
       },
       margin: {
         '-1/2-hscreen': '-50vh',

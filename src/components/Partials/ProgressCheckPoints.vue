@@ -2,11 +2,15 @@
     <div class="h-full w-full py-12 px-12">
         <div class="container mx-auto">
             <div class="w-11/12 lg:w-2/3 mx-auto">
+                <p class="block md:hidden text-green-600 text-lg font-medium mb-8 mx-auto text-center">
+                    Step {{activeIndex+1}}: <span class="font-bold">{{sections[activeIndex]}}</span>
+                </p>
                 <div class="bg-gray-200 h-1 flex items-center justify-between">
                     <div v-for="(key, i) in sections" :key="i" :class="stepDivisionClass">
+                        <glide :delay="i">
                         <!-- Completed Step -->
                         <div v-if="i < activeIndex" class="bg-green-600 h-1 flex items-center justify-start relative">
-                            <FloatingLabel>
+                            <FloatingLabel class="hidden md:block">
                                 <p class="text-green-600 text-xs font-bold">Step {{i + 1}}: {{key}}</p>
                             </FloatingLabel>
                             <div class="bg-green-600 h-6 w-6 rounded-full shadow flex items-center justify-center -ml-3">
@@ -20,7 +24,7 @@
                         <!-- activeIndex Step -->
                         <div v-if="i == activeIndex" class="flex justify-start h-1 items-center relative">
                             <!-- Label -->
-                            <FloatingLabel>
+                            <FloatingLabel class="hidden md:block">
                                 <p class="text-green-600 text-xs font-bold">Step {{i + 1}}: {{key}}</p>
                             </FloatingLabel>
 
@@ -32,19 +36,21 @@
 
                         <!-- InactiveIndex Step -->
                         <div v-if="i > activeIndex" class="h-1 flex items-center justify-start relative">
-                            <FloatingLabel>
+                            <FloatingLabel class="hidden md:block">
                                 <p class="text-gray-400 text-xs font-bold">Step {{i + 1}}: {{key}}</p>
                             </FloatingLabel>
                             <div class="bg-gray-100 h-6 w-6 rounded-full shadow flex items-center justify-center -ml-3 relative">
                                 <div class="h-3 w-3 bg-gray-300 rounded-full"></div>
                             </div>
                         </div>
+                        </glide>
                     </div> 
 
+                    <glide :delay="keys.length-1">
                     <!-- Last item -->
                     <div class="flex justify-start h-1 items-center relative">
                         <template v-if="activeIndex === keys.length -1 ">
-                            <FloatingLabel>
+                            <FloatingLabel class="hidden md:block">
                                 <p class="text-green-600 text-xs font-bold">Step {{keys.length}}: {{keys[keys.length - 1]}}</p>
                             </FloatingLabel>
                             <!-- Step Marker -->
@@ -53,7 +59,7 @@
                             </div>
                         </template>
                         <template v-else>
-                            <FloatingLabel>
+                            <FloatingLabel class="hidden md:block">
                                 <p class="text-gray-400 text-xs font-bold">Step {{keys.length}}: {{keys[keys.length - 1]}}</p>
                             </FloatingLabel>
                             <div class="bg-gray-400 h-6 w-6 rounded-full shadow flex items-center justify-center -ml-3">
@@ -64,6 +70,7 @@
                            </div> 
                         </template>
                     </div>
+                    </glide>
                 </div>
             </div>
         </div>
@@ -71,12 +78,14 @@
 </template>
 
 <script>
+import Glide from '../Utilities/Glide.vue';
  
 import FloatingLabel from "./FloatingLabel.vue";
 
 export default {
     components: {
-        FloatingLabel
+        FloatingLabel,
+        Glide
     },
     props: {
         keys: [],

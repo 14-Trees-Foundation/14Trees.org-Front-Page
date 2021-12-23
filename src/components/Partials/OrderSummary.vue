@@ -117,7 +117,7 @@ export default {
 			const {
 				first_name, last_name, phone, email_id,
 				campaign, trees, names, interest,
-				paymentCaptured, amount, location, currency
+				paymentCaptured, amount, currency
 			} = orderDetails
 
 			this.trees = trees
@@ -128,7 +128,7 @@ export default {
 			const name = first_name + " " + last_name
 			this.details = {
 				name, phone, email_id, campaign,
-				names, ...interest, location
+				names, ...interest, currency 
 			}
 			this.loaded = true
 		},

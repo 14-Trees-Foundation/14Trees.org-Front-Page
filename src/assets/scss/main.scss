@@ -63,6 +63,12 @@ h6, .h6 {
 
 @layer utilities {
 
+  .aspect-1:after {
+    content: "";
+    display: block;
+    padding-bottom: 100%;
+  }
+
   @keyframes pulseBackground {
     from {
       opacity: 0.3;
@@ -166,8 +172,13 @@ h6, .h6 {
 }
 
 .full-page-generic {
-  @apply mx-auto lg:mt-48 mt-16 min-h-screen sm:px-0;
+  @apply mx-auto lg:mt-40 mt-16 min-h-screen sm:px-0;
 }
+
+.full-page-thin{
+  @apply mx-auto lg:mt-20 mt-8 min-h-screen sm:px-0;
+}
+
 
 .fade-enter-active,
 .fade-leave-active {
@@ -198,7 +209,7 @@ h6, .h6 {
   }
 
   .btn-action {
-    @apply inline-flex items-center justify-center md:px-5 md:py-4 px-2 py-2 border border-transparent text-base font-medium rounded-md hover:shadow-md;
+    @apply inline-flex items-center justify-center py-4 px-2 md:px-5 border border-transparent text-base font-medium rounded-md hover:shadow-md;
   }
 
   .btn-blue {
@@ -209,7 +220,7 @@ h6, .h6 {
   }
 
   .btn-animate {
-    @apply transition ease-in-out transition-colors;
+    @apply ease-in-out transition-colors;
   }
 
   .btn-gray {
@@ -219,7 +230,8 @@ h6, .h6 {
     @apply bg-gray-500;
   }
   .card {
-    @apply border border-gray-200 dark:border-gray-600 bg-white dark:bg-dark-grey rounded-lg shadow-lg transition duration-200 ease-out transform cursor-pointer;
+    @apply border border-gray-200 dark:border-gray-600 bg-white dark:bg-dark-grey rounded-lg;
+    @apply shadow-md transition duration-200 ease-out transform cursor-pointer;
   }
   .card:hover {
     @apply scale-101;

@@ -1,8 +1,8 @@
  <template>
      <Layout>
         <div class="container full-page-generic">
-            <h1 class="title-text">Contribute Now</h1>
-            <div class="mx-4 md:pt-16">
+            <h1 class="title-text mt-0">Contribute Now</h1>
+            <div class="mx-4 md:pt-4">
 				<contribute-form/>
 			</div>
         </div>
