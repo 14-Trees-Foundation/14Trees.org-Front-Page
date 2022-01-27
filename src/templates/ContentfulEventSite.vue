@@ -1,7 +1,7 @@
 <template>
     <main v-if="event" class="container mx-auto m-12">
         <div class="flex flex-col mx-auto text-center min-h-1/2-screen p-12">
-            <g-image :src="header" class="w-1/2 mx-auto"/>
+            <g-image v-if="header" :src="header" class="w-1/2 mx-auto"/>
             <h2>{{event.title}}</h2>
             <h3>{{event.subtitle}}</h3>
             <h3>{{event.tagline}}</h3>
@@ -42,7 +42,11 @@ export default {
             return this.$page.event
         },
         header() {
-            return this.event.headerImage.file.url || this.event.headerImageLink
+            // if (this.event.headerImage && this.event.headerImage?.file) {
+            //     return this.event.headerImage.file.url
+            // }
+            // if (this.event.headerImageLink) return this.event.headerImageLink
+            return null 
         },
         content() {
             return documentToHtmlString(this.event.content)
