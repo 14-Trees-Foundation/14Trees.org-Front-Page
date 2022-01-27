@@ -1,8 +1,8 @@
 <template>
 	<div>
-		<div class="w-full mb-2 overflow-x-hidden dark:text-gray-400">
+		<div class="overflow-x-hidden pt-5.5 px-4 dark:text-gray-400 bg-light-50 h-screen w-full">
 			<h2 class="text-xl my-0">Navigation</h2>
-			<div class="menu-links">
+			<div class="menu-links mt-4">
 				<ul>
 					<li v-for="navItem in getNavItems" :key="navItem.name" class="py-1">
 						<g-link class="block py-1" :to="navItem.link" :title="navItem.name"

@@ -1,12 +1,15 @@
 //tailwind border color plugin powered by
 //https://github.com/tailwindcss/tailwindcss/pull/560#issuecomment-503222143
 var _ = require('lodash')
-var flattenColorPalette = require('tailwindcss/lib/util/flattenColorPalette').default
-const colors = require('tailwindcss/colors')
+// var flattenColorPalette = require('tailwindcss/lib/util/flattenColorPalette').default
+const colors = require('windicss/colors')
 
 module.exports = {
   darkMode: 'class',
-  mode: 'jit',
+  // mode: 'jit',
+  plugins: [
+    require('windicss/plugin/forms'),
+  ],
   purge: {
     content:["./src/**/*.html", "./src/**/*.vue", "./src/**/*.jsx"],
     options: {
@@ -19,9 +22,6 @@ module.exports = {
       ]
     }
   },
-  plugins: [
-    require('@tailwindcss/forms'),
-  ],
   theme: {
     extend: {
       variants: {
@@ -49,7 +49,8 @@ module.exports = {
       },
       height: {
         '128': '32rem',
-        'half-screen': '50vh'
+        'half-screen': '50vh',
+        'almost-screen': '90vh',
       },
       minHeight: {
         '0': '0',

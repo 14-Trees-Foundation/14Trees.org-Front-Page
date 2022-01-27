@@ -1,31 +1,41 @@
 import { Handler } from "@netlify/functions";
-import { initializeApp, cert }  from 'firebase-admin/app';
-import { getFirestore, Timestamp, FieldValue } from 'firebase-admin/firestore';
+import { initializeApp, cert, ServiceAccount }  from 'firebase-admin/app';
+import { getFirestore, DocumentReference } from 'firebase-admin/firestore';
+import sendgridMail from '@sendgrid/mail';
 
-type FormData = {
+type donation = {
+    paymentCaptured: boolean,
+    campaign: string,
+    source: string,
     contribution: {
-        paymentCaptured: boolean,
+        trees: number,
         amount: number,
         currency: 'INR' | 'USD',
         date: Date,
-        campaign: string,
-        trees: number,
     }
     donor: {
-        first_name: string,
-        last_name: string,
+        first_name?: string,
+        last_name?: string,
         email_id: string,
         phone: string,
-        currency: string,
-        interest: {
-            csr: boolean,
-            visit: boolean,
-            volunteer: boolean,
-        },
-        notifications: {
-            updates: boolean,
-            newsletter: boolean
-        }
+        ref: DocumentReference,
+    }
+}
+
+type donor = {
+    email_id: string,
+    phone: string,
+    region: string,
+    first_name?: string,
+    last_name?: string,
+    interest?: {
+        csr: boolean,
+        visit: boolean,
+        volunteer: boolean,
+    },
+    notifications?: {
+        updates: boolean,
+        newsletter: boolean
     }
 }
 
@@ -67,7 +77,7 @@ type RazorpayPayment = {
         vpa: string,
         email: string,
         contact: number,
-        notes: Array<any>,
+        notes: {[key: string]: string},
         fee: number,
         tax: number,
         error_code: string,
@@ -81,40 +91,98 @@ type RazorpayPayment = {
         created_at: number
 }
 
-function addDonation(id: string) {
-    initializeApp({
-        credential: cert({
-            projectId: process.env.FIREBASE_ADMIN_PROJECT_ID,
-            clientEmail: process.env.FIREBASE_ADMIN_CLIENT_EMAIL,
-            privateKey: process.env.FIREBASE_ADMIN_PRIVATE_KEY,
-        }),
-        // databaseURL: `https://${DATABASE_NAME}.firebaseio.com` // not required for firestore?
-    });
-    return getFirestore().collection('donations').doc(id)
+function initServices() {
+    const firebaseSecrets: ServiceAccount = {
+        projectId: process.env.FIREBASE_ADMIN_PROJECT_ID,
+        clientEmail: process.env.FIREBASE_ADMIN_CLIENT_EMAIL,
+        privateKey: process.env.FIREBASE_ADMIN_PRIVATE_KEY,
+    }
+    // databaseURL: `https://${DATABASE_NAME}.firebaseio.com` // not required for firestore?
+    initializeApp({ credential: cert(firebaseSecrets) });
+    sendgridMail.setApiKey(process.env.SENDGRID_API_KEY);
 }
 
-function createDonationObject(payment: RazorpayPayment, fields: Array<any>) {
-    let donation: FormData['contribution'] = {
-        paymentCaptured: true,
+function calcNumberOfTrees(amount: number, currency: 'INR' | 'USD') {
+    if (currency === 'INR') {
+        return Math.floor(amount / 300000)
+    }
+    return Math.floor(amount / 40)
+}
+
+/*
+    This function creates a new donation document in the firestore database. 
+    It also updates the donor document with the user details.
+    fields array comes from Razorpay notes. This will be different for different payment forms
+    fields: [
+        'email'
+        'phone'
+        ...custom fields
+    ]
+*/
+function createDonationObject(payment: RazorpayPayment): donation {
+    const fields: {[key: string]: string} = payment.notes;
+
+    let contribution: donation['contribution'] = {
         amount: payment.amount,
         currency: payment.currency,
         date: new Date(),
-        campaign: "iitk-djc",
-        trees: fields[0].value,
+        trees: calcNumberOfTrees(payment.amount, payment.currency),
     }
-    return donation
+    return {
+        campaign: 'iitk-djc',
+        source: 'terre-razorpay',
+        paymentCaptured: payment.status === 'captured',
+        contribution,
+        donor: {
+            email_id: fields.email,
+            phone: fields.phone,
+            ref: getFirestore().doc(`donors/${fields.email}`),
+        }
+    }
+}
+
+function createDonorObject(payment: RazorpayPayment): donor {
+    const fields: {[key: string]: string} = payment.notes;
+
+    return {
+        email_id: fields.email,
+        phone: fields.phone,
+        region: payment.currency === 'INR' ? 'india' : 'foreign',
+    }
+}
+
+async function sendEmailReceipt(payment: RazorpayPayment, donation: donation) {
+    const msg = {
+        to: payment.email,
+        from: "test@14trees.org",
+        templateId: process.env.SENDGRID_TEMPLATE_ID,
+        dynamicTemplateData: {
+            trees: donation.contribution.trees,
+        }
+        // subject: "[ Test ] Thank you for your donation",
+        // text: "Thank you for your donation. This is a test",
+        // html: "<strong>Thank you for your donation. This is a test</strong>"
+    }
+    const response = await sendgridMail.send(msg);
+    console.log(response)
 }
 
 const handler: Handler = async (event: any) => {
     const payload : RazorpayEvent = JSON.parse(event.body)
+    console.log(JSON.stringify(payload))
+
     if (payload.event === 'payment.captured' && payload.contains.includes('payment')) {
         const payment : RazorpayPayment = payload.payload?.payment.entity
         if (payment && payment.captured) {
-            console.log(payment.notes)
-
-        // TODO: formData to firestore incl orderId
-        const donationRef = addDonation("id");
-        await donationRef.set(createDonationObject(payment, payment.notes))
+            initServices()
+            const donorRef = getFirestore().collection('donors').doc(payment.email)
+            await donorRef.set(createDonorObject(payment))
+            
+            const donationRef = getFirestore().collection('donations').doc(payment.id);
+            const donation = createDonationObject(payment)
+            await donationRef.set(donation)
+            
+            await sendEmailReceipt(payment, donation)
         }
     }
     

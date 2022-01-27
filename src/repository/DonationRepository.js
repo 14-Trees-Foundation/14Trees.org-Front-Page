@@ -2,47 +2,43 @@ import db from "~/repository/db/firebaseInit";
 import { collection, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import axios from "axios";
 
-/**
- * Donation Repository DB Schema
- * 
- * Campaigns: (campaignId : string [matching ContentfulCampaign: id])
- * 		name: string
- * 		Donations: collection
- * 		
- * Campaigns/Donations: (orderId: string [matching razorpay orderId])
- *  	paymentCaptured: boolean,
- * 		source: string (14trees-web/terre/google-forms/test/etc),
- *  	contribution: {
- *  		amount: number,
- * 			currency: 'INR' | 'USD',
- * 			date: Date,
- * 			trees: number,
- * 		}
- * 		donor: {
- * 			first_name: string,
- * 			last_name: string,
- * 			email_id: string,
- * 			phone: string,
- * 			Donor: reference (Donors/email_id)
- * 		}
- *
- * Donors: (email_id: string)
- * 		first_name: string,
- * 		last_name: string,
- * 		email_id: string,
- * 		phone: string,
- * 		currency: string,
- * 		interest: {
- * 			csr: boolean,
- * 			visit: boolean,
- * 			volunteer: boolean,
- * 		},
- * 		notifications: {
- * 			updates: boolean,
- * 			newsletter: boolean
- * 		}
- */
+/*  Donation Repository DB Schema
+ 		
+ Donations: (orderId: string [matching razorpay orderId])
+	campaign: string (matching contentful campaign-id),
+  	paymentCaptured: boolean,
+ 	source: string (14trees-web/terre/google-forms/test/etc),
+	names: Array<string>, // names of the people on behalf of
+  	contribution: {
+		trees: number,
+  		amount: number,
+		currency: 'INR' | 'USD',
+		date: Date,
+	}
+	donor: {
+		first_name: string,
+		last_name: string,
+		email_id: string,
+		phone: string,
+		Donor: reference (Donors/email_id)
+	}
 
+ Donors: (email_id: string)
+	first_name: string,
+	last_name: string,
+	email_id: string,
+	phone: string,
+	currency: string,
+	interest: {
+		csr: boolean,
+		visit: boolean,
+		volunteer: boolean,
+	},
+	notifications: {
+		updates: boolean,
+		newsletter: boolean
+	}
+*/
 
 const RAZORPAY_CHECKOUT_URI="https://checkout.razorpay.com/v1/checkout.js"
 
@@ -58,13 +54,6 @@ async function verifyPayment(orderId_orig, response) {
 	// Fire serverless function to verify payment signature
 	let verify_response = await axios.post(rzpEndpoint, verifyPayload)
 	if (!verify_response?.data) { throw Error("Something went wrong") }
-	console.log(verify_response.data)
-
-	if (verify_response.data.valid) {
-		// Update paymentCaptured field for this order in our database
-		const donationRef = doc(db, "donations", orderId_orig);
-		await updateDoc(donationRef, { paymentCaptured: true });
-	}
 
 	return verify_response.data.valid;
 }
@@ -90,13 +79,11 @@ async function createRazorpayOrder(orderData, orderId = null) {
  * @param {string} orderId - orderId from razorpay used as primary key for donation
  * @param {object} formData - all fields from the donation form
  */
-async function saveFirestoreUserAndDonation(orderId, formData) {
-	console.log(formData)
-	if (orderId && formData.donor?.email_id && formData.contribution?.campaign) {
-		const campaignId = formData.contribution.campaign
-		// await setDoc(doc(db, "donations", orderId), formData.contribution);
-		await setDoc(doc(db, "campaigns", campaignId, "donations", orderId), formData.contribution);
-		await setDoc(doc(db, "donors", formData.donor.email_id), formData.donor);
+async function saveToFirestore(orderId, donation, donor) {
+	if (orderId && donor?.email_id && donation?.campaign) {
+		await setDoc(doc(db, "donors", donor.email_id), donor);
+		donor.Donor = `donors/${donor.email_id}`;
+		await setDoc(doc(db, "donations", orderId), donation);
 	} else {
 		throw new Error("Fields missing")
 	} 
@@ -107,8 +94,8 @@ export default {
 	 * @param {string} orderId - orderId from razorpay used to fetch the filled formdata from firestore
 	 */
 	async get(orderId) {
-		const docRef = doc(db, "donations", orderId);
-		const docSnap = await getDoc(docRef);
+		console.log("Fetching donation data for orderId: ", orderId)
+		const docSnap = await getDoc(doc(db, "donations", orderId));
 		if (docSnap.exists()) {
   			return docSnap.data()
 		} else {
@@ -124,17 +111,31 @@ export default {
 		if (! formData.contribution || !formData.donor) return null
 
 		// Create order using serverless function
+		// let orderId = "test123", verifiedAmount = 3300, currency = "INR"; // test only
 		const { orderId, verifiedAmount, currency } = await createRazorpayOrder(formData.contribution, updateOrderId)
-		// let orderId = "test123", verifiedAmount = 0, currency = "inr" // test only
 
 		if (orderId) {
 			// Mark payment as false and store data in our database even before payment
-			formData.contribution.paymentCaptured = false
-			formData.contribution.amount = verifiedAmount
-			formData.contribution.currency = currency
-			formData.contribution.date = new Date()
-	
-			await saveFirestoreUserAndDonation(orderId, formData)
+
+			const contribution = {
+				paymentCaptured : false,
+				campaign: formData.contribution.campaign,
+				names: formData.contribution.names,
+				source: "14trees-web",
+				contribution: {
+					trees: formData.contribution.trees,
+					amount: verifiedAmount,
+					currency : currency,
+					date : new Date()
+				},
+				donor: {
+					first_name: formData.donor.first_name,
+					last_name: formData.donor.last_name,
+					email_id: formData.donor.email_id,
+					phone: formData.donor.phone,
+				}
+			}
+			await saveToFirestore(orderId, contribution, formData.donor)
 			return orderId
 		} else return null
 	},
@@ -167,7 +168,7 @@ export default {
 			order_id: orderData.orderId,
 			// callback_url: createCallbackUrl(orderId),
 			handler: onPaymentSuccess,
-			prefill: { name: orderData.name, email: orderData.email_id, contact: orderData.phone},
+			prefill: orderData.donorDetails,
 		}
 
 		// Open razorpay global dialog to capture payment
