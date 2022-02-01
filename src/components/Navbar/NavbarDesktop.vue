@@ -66,11 +66,13 @@
 					<li class="flex flex-grow justify-end">
 						<button type="submit" class="flex flex-row btn-action text-white h-10
 				 		bg-green-500 dark:bg-green-600 hover:bg-green-600 duration-500">
- 						<g-link to="/contribute" class="text-md flex">
-						 <div> <g-image src="~/assets/images/Planting.svg" class="w-4 mr-2 mt-1"></g-image> </div>
-						 <span>Contribute</span>
-						 </g-link>
- 						</button>
+							<g-link to="/contribute" class="text-md flex">
+								<div>
+									<g-image src="~/assets/images/Planting.svg" class="w-4 mr-2 mt-1"></g-image>
+								</div>
+								<span>Contribute</span>
+							</g-link>
+						</button>
 					</li>
 				</ul>
 			</div>

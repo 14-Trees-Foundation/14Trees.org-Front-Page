@@ -223,7 +223,7 @@
 												<label for="country"
 													class="block text-sm font-medium text-gray-700">Country/Currency</label>
 												<select id="country" v-model="formData.contribution.currency" name="country" autocomplete="country" class="input-field">
-													<option v-for="c in currencies" :value="c.value" :key="c.value" :selected="c.value === currency">
+													<option v-for="c in currencies" :value="c.value" :key="c.value" :selected="c.value === formData.contribution.currency">
 																{{c.label}} {{c.value}}
 															</option>
 												</select>
@@ -442,14 +442,14 @@ export default {
 		selectType(type) {
 			this.contribution_type = type
 			if (type === "foreign") {
-				this.currency = "usd"
+				this.formData.contribution.currency = "usd"
 				this.message = `For overseas transcations, we have partnered with 
 					<a class="text-slate-500" href="https://terrepolicycentre.com/">
 					TERRE Policy Centre</a> to collect payments on our behalf.
 					<br/>Please go through our Terms and Conditions for more info.
 				`
 			}
-			if (type === "india") this.currency = "INR"
+			if (type === "india") this.formData.contribution.currency = "INR"
 			this.$refs.glideAnimate?.trigger()
 		},
 		async loadOrder() {

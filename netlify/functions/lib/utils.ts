@@ -27,8 +27,8 @@ export async function generateInvoice (opts: InvoiceOptions) {
         currency: "inr",
         balance_title: "Contribution Amount",
         number: opts.invoice_number,
-        notes: "Thank you for contributing to 14 Trees!",
-        terms: "<Terms and Conditions>"
+        notes: "Thank you for contributing to 14 Trees",
+        terms: "14 Trees Foundation is a registered ______\nPAN Number: ____________\n<Other Terms and Conditions>"
     }
 
     const response = await fetch("https://invoice-generator.com", {
@@ -70,7 +70,7 @@ export async function sendEmailReceipt(to: string, donation: donation, attachmen
             trees: donation.contribution.trees,
             name: `${donation.donor.first_name} ${donation.donor.last_name}`,
             campaign: donation.campaign,
-            amount:  `${curr} donation.contribution.amount`,
+            amount:  `${curr} ${donation.contribution.amount/100}`,
             details: donation.donor.pan ? `PAN ${donation.donor.pan}` : "-",
         }
     }

@@ -6,7 +6,7 @@
 				<div v-if="order.paymentCaptured" class="flex">
 					<div class="flex-grow">
 						<div class="text-2xl md:text-3xl font-normal text-gray-800 flex">
-							<span class="mr-4">Your Order Confirmation</span>
+							<span class="mr-4">Contribution Summary</span>
 							<font-awesome :icon="['fas', 'check']" class="text-green-500 border-2 rounded-full p-1 animate-pulse h-10 w-10 my-auto"></font-awesome>
 						</div>
 						<p class="w-full text-md md:text-xl font-thin">Reference ID : <a class="text-blue-700" :href="orderLink">{{orderId.replace('order_', '')}}</a></p>
@@ -20,7 +20,7 @@
 				</div>
 				<div v-else class="flex">
 					<div class="block">
-						<p class="block w-full text-2xl md:text-3xl font-normal text-gray-800">Confirm Your Order</p>
+						<p class="block w-full text-2xl md:text-3xl font-normal text-gray-800">Confirm Your Contribution</p>
 						<p class="w-full text-md md:text-xl font-thin">Reference ID : <a class="text-blue-700" :href="orderLink">{{orderId.replace('order_', '')}}</a></p>
 					</div>
 					<button @click="edit" class="block md:text-xl items-center rounded ml-auto md:pl-4 border hover:shadow-md transition-shadow duration-200 ease-in-out">
@@ -56,7 +56,7 @@
 				<span class="text-lg italic text-dark-500">
 					Thank you for your contribution.
 				</span><br/>
-				<span class="text-lg italic text-dark-500">
+				<span v-if="order.emailSent" class="text-lg italic text-dark-500">
 					The receipt for this transaction has been sent to 
 					<span class="text-blue-700">{{order.donor.email_id}}.</span> 
 				</span>

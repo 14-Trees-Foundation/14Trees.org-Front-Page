@@ -38,6 +38,18 @@
 						</ClientOnly>
 
 					</li>
+					<li class="w-full justify-center fixed bottom-0 left-0 p-4">
+						<button type="submit" class="w-full h-16 mx-auto flex flex-row btn-action 
+						text-white h-10 shadow-lg shadow-green-600/50 border border-green-550
+						bg-green-500 dark:bg-green-600 hover:bg-green-600 duration-500">
+							<g-link to="/contribute" class="text-md flex">
+								<div>
+									<g-image src="~/assets/images/Planting.svg" class="w-4 mr-2 mt-1"></g-image>
+								</div>
+								<span>Contribute Now</span>
+							</g-link>
+						</button>
+					</li>
 				</ul>
 			</div>
 		</div>
