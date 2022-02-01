@@ -98,6 +98,8 @@ export /*
 function createDonationObject(payment: RazorpayPayment): donation {
     const fields: {[key: string]: string} = payment.notes;
 
+    let [first_name, last_name] = splitNames(fields)
+
     let contribution: donation['contribution'] = {
         amount: payment.amount,
         currency: payment.currency,
@@ -109,7 +111,9 @@ function createDonationObject(payment: RazorpayPayment): donation {
         source: 'terre-razorpay',
         paymentCaptured: payment.status === 'captured',
         contribution,
+        emailSent: false,
         donor: {
+            first_name, last_name,
             email_id: fields.email,
             phone: fields.phone,
             ref: getFirestore().doc(`donors/${fields.email}`),
@@ -117,17 +121,17 @@ function createDonationObject(payment: RazorpayPayment): donation {
     }
 }
 
+function splitNames(obj: {[key: string]: string}) {
+    if (obj.first_name && obj.last_name) {
+        return [obj.first_name, obj.last_name]
+    } else if (obj.full_name) {
+        return obj.full_name.split(' ')
+    } else return ['', ''] 
+}
+
 export function createDonorObject(payment: RazorpayPayment): donor {
     const fields: {[key: string]: string} = payment.notes;
     console.log(fields)
-
-    const splitNames = (obj: {[key: string]: string}) => {
-        if (obj.first_name && obj.last_name) {
-            return [obj.first_name, obj.last_name]
-        } else if (obj.full_name) {
-            return obj.full_name.split(' ')
-        } else return ['', ''] 
-    }
 
     let [first_name, last_name] = splitNames(fields)
 
