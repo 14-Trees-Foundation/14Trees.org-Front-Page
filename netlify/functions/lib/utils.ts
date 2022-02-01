@@ -57,6 +57,9 @@ export function initServices() {
 }
 
 export async function sendEmailReceipt(to: string, donation: donation, attachments: EmailAttachment[], context: "test" | "prod" = "test") {
+    let curr = ""
+    if (donation.contribution.currency === 'INR') curr =  "₹"
+    else if (donation.contribution.currency === 'USD') curr = "$"
     const msg = {
         to: to,
         from: context === "test" ? "test@14trees.org" : "contact@14trees.org",
@@ -65,6 +68,10 @@ export async function sendEmailReceipt(to: string, donation: donation, attachmen
         dynamicTemplateData: {
             first_name: donation.donor.first_name,
             trees: donation.contribution.trees,
+            name: `${donation.donor.first_name} ${donation.donor.last_name}`,
+            campaign: donation.campaign,
+            amount:  `${curr} donation.contribution.amount`,
+            details: donation.donor.pan ? `PAN ${donation.donor.pan}` : "-",
         }
     }
     await sendgridMail.send(msg);
