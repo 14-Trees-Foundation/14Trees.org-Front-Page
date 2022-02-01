@@ -1,6 +1,6 @@
 <template>
 	<div v-if="loaded">
-		<div v-if="contribution_type != 'foreign'" class="md:mb-24 mb-8">
+		<div v-if="contribution_type != 'foreign'" class="md:mb-24 mb-4">
 			<ProgressCheckPoints :keys="['Select Type', 'Contribution', 'Information', 'Communication', 'Payment']" :activeIndex="form_stage"/>
 		</div>
 
@@ -10,7 +10,7 @@
 
 		<div v-show="contribution_type">
  		<ClientOnly>
-			<form action="#" method="POST" id="pledgeForm" @submit="checkAndSubmitForm" class="mt-18 md:ml-12 md:mb-32 mb-12">
+			<form action="#" method="POST" id="pledgeForm" @submit="checkAndSubmitForm" class="mt-10 md:ml-12 md:mb-32 mb-12">
 			<div v-if="message" class="max-w-screen-sm mx-auto">
 				<div class="my-12 relative px-4 py-3 leading-normal text-gray-700 bg-gray-300 rounded-lg" role="alert">
 					<span class="absolute inset-y-0 left-0 flex items-center mx-4">
@@ -36,7 +36,7 @@
 					<!-- ******************************************************** -->
 					<!-- ****************** Contribution ************************-->
 					<!-- ******************************************************** -->
-					<div class="mt-10 sm:mt-0" v-if="contributionExpand">
+					<div class="mt-6 sm:mt-0" v-if="contributionExpand">
 						<div class="md:grid md:grid-cols-3 md:gap-6">
 							<div class="md:col-span-1">
 								<div class="px-4 sm:px-0">
@@ -71,11 +71,14 @@
 														<span class="m-auto text-2xl font-thin">+</span>
 													</button>
 												</div>
-														<span v-else class="input-field text-gray-500 inline-flex items-center">
-															<span class="pl-1 pr-4 border-r"> {{formData.contribution.trees}} </span>
-															<font-awesome class="text-gray-300 mx-4" :icon="['fas', 'lock']"></font-awesome>
-															<span class="text-xs text-gray-400"> Please make a separate contribution to edit this field</span>
-														</span>
+													<span v-else class="input-field text-gray-500 inline-flex items-center">
+														<span class="pl-1 pr-4 border-r"> {{formData.contribution.trees}} </span>
+														<font-awesome class="text-gray-300 mx-4" :icon="['fas', 'lock']"></font-awesome>
+														<span class="text-xs text-gray-400"> Please make a separate contribution to edit this field</span>
+													</span>
+													<div class="text-xl text-right mt-2"> 
+														<span class="text-sm font-light">Contribution Amount: </span>₹ {{3000*formData.contribution.trees}}
+													</div>
 											</div>
 		
 													<!-- Names to add -->
@@ -116,7 +119,7 @@
 							<div class="md:col-span-1">
 								<div class="px-4 sm:px-0">
 									<p class="text-sm text-gray-600 mt-6">
-										Besides making a monetary contribution, I would also like to:
+										Besides making a monetary contribution, I am also interested in these opportunities. 
 									</p>
 								</div>
 							</div>
@@ -197,6 +200,8 @@
 									<h3 class="text-lg font-medium leading-6 text-gray-900">Contact Information</h3>
 									<p class="mt-1 text-sm text-gray-600">
 										Choose an email address where you would like to receive correspondence.
+										<br/>
+										Indian taxpayers must submit their PAN details for income tax deductions.
 									</p>
 								</div>
 							</div>
@@ -208,8 +213,10 @@
 											name="first_name" required id="first_name" autocomplete="given-name"/>
 											<input-wrapper class="col-span-6 sm:col-span-3" type="text" v-model="formData.donor.last_name"
 											name="last_name" id="last_name" autocomplete="family-name" placeholder="Last Name" required/>
-											<input-wrapper class="col-span-6 sm:col-span-4" v-model="formData.donor.email_id" 
+											<input-wrapper class="col-span-6 sm:col-span-3" v-model="formData.donor.email_id" 
 											name="email_address" type="email" id="email_address" placeholder="Email address" required />
+											<input-wrapper class="col-span-6 sm:col-span-3" v-model="formData.donor.pan" 
+											name="pan" type="text" id="pan" placeholder="PAN Number" />
 											<input-wrapper placeholder="Phone Number" class="col-span-6 sm:col-span-3" type="tel" v-model.number="formData.donor.phone"
 											name="phone_number" id="phone_number" autocomplete="tel" required min="999999999" max="9999999999" />
 											<div class="col-span-6 sm:col-span-3">
@@ -276,6 +283,8 @@
 									<h3 class="text-lg font-medium leading-6 text-gray-900">Communication</h3>
 									<p class="mt-1 text-sm text-gray-600">
 										Decide which communications you'd like to receive and how.
+										<br/>
+										14 Trees Foundation does not share your personal information with any third parties.
 									</p>
 								</div>
 							</div>
@@ -292,9 +301,8 @@
 													<div class="ml-3 text-sm">
 														<label for="comments" class="font-medium text-gray-700">14
 															Trees Milestones</label>
-														<p class="text-gray-500">Receive regular updates on the 14
-															Trees Foundation's progress in
-															your Inbox</p>
+														<p class="text-gray-500">Receive updates on the 14
+															Trees Foundation's progress in your Inbox (once a quarter)</p>
 													</div>
 												</div>
 												<div class="flex items-start">
@@ -305,7 +313,7 @@
 													<div class="ml-3 text-sm">
 														<label for="candidates"
 															class="font-medium text-gray-700">Newsletter</label>
-														<p class="text-gray-500">Subscribe to our annual report</p>
+														<p class="text-gray-500">Subscribe to our newsletter for frequent updates and more contribution opportunities.</p>
 													</div>
 												</div>
 											</div>
@@ -344,7 +352,7 @@
 				<span v-else class="text-xl">Contribute</span>
 			</button>
 			</form>
-			<modal :showModal="openConfirmation" @close="openConfirmation = false" :showCloseButton="false">
+			<modal :showModal="openConfirmation" @close="openConfirmation = false" :showCloseButton="true">
 				<div class="mx-auto">
 					<order-summary :orderId="orderId" rounded/>
 				</div>
@@ -386,31 +394,9 @@ export default {
 			loaded: false,
 			contribution_type: "",
 			contributionExpand: true,
-			communicationExpand: false,
-			personal_infoExpand: false,
-			formData: {
-				donor: {
-					first_name: "",
-					last_name: "",
-					email_id: "",
-					phone: "",
-					interest: {
-						csr: false,
-						visit: false,
-						volunteer: false,
-					},
-					notifications: {
-						updates: false,
-						newsletter: false,
-					}
-				},
-				contribution: {
-					names: [],
-					currency: "INR",
-					campaign: "",
-					trees: 1,
-				},
-			},
+			communicationExpand: true,
+			personal_infoExpand: true,
+			formData: {},
 			addName: "",
 			campaigns: null,
 			processing: false,
@@ -423,6 +409,7 @@ export default {
 	},
 	async mounted() {
 		this.loaded = false;
+		this.formData = Repository.donation.emptyFormData();
 		this.campaigns = this.$static.campaigns.edges.map(e => e.node)
 		this.formData.contribution.campaign = this.fromCampaign?.length > 0 ? this.fromCampaign.title : this.campaigns[0].title;
 		if (this.formOrderId) {
@@ -528,11 +515,11 @@ export default {
 			return this.campaigns?.find(c => c.title === this.formData.contribution.campaign)
 		},
 		form_stage: function() {
-			if(this.orderId !== null && this.orderId.length && this.contributionFilled && this.personal_infoExpand && this.personalInfoFilled && this.communicationExpand)
+			if(this.contribution_type && this.orderId !== null && this.orderId.length && this.contributionFilled && this.personal_infoExpand && this.personalInfoFilled && this.communicationExpand)
 				return 4;
-			if(this.contributionFilled && this.personal_infoExpand && this.personalInfoFilled)
+			if(this.contribution_type && this.contributionFilled && this.personal_infoExpand && this.personalInfoFilled)
 				return 3;
-			if(this.contributionFilled && this.personal_infoExpand && !this.personalInfoFilled)
+			if(this.contribution_type && this.contributionFilled && this.personal_infoExpand && !this.personalInfoFilled)
 				return 2;
 			if(this.contribution_type)
 				return 1;

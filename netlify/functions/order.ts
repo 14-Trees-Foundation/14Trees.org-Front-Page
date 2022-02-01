@@ -1,5 +1,5 @@
-import Razorpay from 'razorpay';
 import { Handler } from "@netlify/functions";
+import { getRZPInstance } from "./lib/utils"
 
 type ResponseBody = {
     orderId: string,
@@ -11,21 +11,10 @@ type OrderData = {
     orderId: string,
     trees: number,
     currency?: string,
-    // first_name: string,
-    // last_name: string,
-    // email_id: string,
-    // phone: string,
 }
 
-function getRZPInstance() { 
-    // live get from env variables
-    return new Razorpay({
-        key_id: process.env.RZP_KEY || 'rzp_test_od3yQVWQEML7Ta',
-        key_secret: process.env.RZP_SECRET || 'qUAtQnTyukmFQY6fuB1dh5iV'
-    })
-}
-
-const handler: Handler = async (event, context) => {
+const handler: Handler = async (event, ctx) => {
+    let context : "prod" | "test" = process.env.CONTEXT === "production" ? "prod" : "test"
     const formData: OrderData = JSON.parse(event.body)
     const orderNotes = { trees: formData.trees, source: '14trees-web' }
 
@@ -35,7 +24,8 @@ const handler: Handler = async (event, context) => {
         currency: "INR",
         notes: orderNotes
     };
-    const instance = getRZPInstance()
+    const instance = getRZPInstance(context)
+
     let responseBody: ResponseBody = null
 
     if (! formData.orderId) {

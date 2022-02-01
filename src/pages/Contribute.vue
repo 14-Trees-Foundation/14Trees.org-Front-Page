@@ -1,15 +1,17 @@
  <template>
      <Layout>
         <div class="container full-page-generic">
-            <h1 class="title-text mt-0">Contribute Now</h1>
-            <div class="mx-4 md:pt-4">
-                <div v-if="newOrder">
-                    <contribute-form/>
+            <div class="lg:(border shadow-xl py-32 mb-12 rounded-md)">
+                <h1 class="title-text mt-0">Contribute Now</h1>
+                <div class="mx-4 md:pt-4">
+                    <div v-if="newOrder">
+                        <contribute-form/>
+                    </div>
+                    <div v-else-if="orderId">
+                        <contribute-form :formOrderId="orderId"/>
+                    </div>
+                    <div v-else> Loading </div>
                 </div>
-                <div v-else-if="orderId">
-                    <contribute-form :formOrderId="orderId"/>
-                </div>
-                <div v-else> Loading </div>
             </div>
         </div>
     </Layout>

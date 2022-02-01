@@ -90,6 +90,9 @@ async function saveToFirestore(orderId, donation, donor) {
 }
 
 export default {
+	emptyFormData() {
+		return donationFormTemplate
+	},
 	/**
 	 * @param {string} orderId - orderId from razorpay used to fetch the filled formdata from firestore
 	 */
@@ -133,6 +136,7 @@ export default {
 					last_name: formData.donor.last_name,
 					email_id: formData.donor.email_id,
 					phone: formData.donor.phone,
+					pan: formData.donor.pan,
 				}
 			}
 			await saveToFirestore(orderId, contribution, formData.donor)
@@ -202,4 +206,29 @@ function getRazorpayKey(mode = 'test') {
 	// 	return 'rzp_live_suDBmsBep11zB3'
 	if (mode === 'live')
 		return 'rzp_live_xxxxxxxxxxxxxx'
+}
+
+const donationFormTemplate = {
+	donor: {
+		first_name: "",
+		last_name: "",
+		email_id: "",
+		pan: "",
+		phone: "",
+		interest: {
+			csr: false,
+			visit: false,
+			volunteer: false,
+		},
+		notifications: {
+			updates: true,
+			newsletter: false,
+		}
+	},
+	contribution: {
+		names: [],
+		currency: "INR",
+		campaign: "",
+		trees: 1,
+	}
 }

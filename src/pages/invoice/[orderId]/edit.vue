@@ -6,9 +6,7 @@
 				<contribute-form :orderIdEdit="orderId"/>
 			</div>
         </div>
-    </Layout>
-			
-				
+    </Layout>	
 </template>
 
 <script>

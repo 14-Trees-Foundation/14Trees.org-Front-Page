@@ -1,15 +1,23 @@
 <template>
 <div class="mx-auto md:h-full h-screen md:max-w-screen-lg max-w-screen-sm">
-    <div v-if="loaded" class="flex flex-wrap min-h-1/2-screen h-full sm:h-auto sm:max-w-11/12 mx-auto">
+    <div v-if="loaded && valid" class="flex flex-wrap min-h-1/2-screen h-full sm:h-auto mx-auto">
         <div class="flex-grow sm:mt-0 mx-auto md:w-2/3 w-full py-8 px-8 dark:bg-black bg-white flex flex-col" :class="{'md:rounded-l-2xl': rounded, 'md:rounded-r-2xl': rounded && order.paymentCaptured}">
 			<div>
-				<template v-if="order.paymentCaptured">
-					<div class="text-2xl md:text-3xl font-normal text-gray-800 flex">
-						<span class="mr-4">Your Order Confirmation</span>
-						<font-awesome :icon="['fas', 'check']" class="text-green-500 border-2 rounded-full p-1 animate-pulse h-10 w-10 my-auto"></font-awesome>
+				<div v-if="order.paymentCaptured" class="flex">
+					<div class="flex-grow">
+						<div class="text-2xl md:text-3xl font-normal text-gray-800 flex">
+							<span class="mr-4">Your Order Confirmation</span>
+							<font-awesome :icon="['fas', 'check']" class="text-green-500 border-2 rounded-full p-1 animate-pulse h-10 w-10 my-auto"></font-awesome>
+						</div>
+						<p class="w-full text-md md:text-xl font-thin">Reference ID : <a class="text-blue-700" :href="orderLink">{{orderId.replace('order_', '')}}</a></p>
 					</div>
-					<p class="w-full text-md md:text-xl font-thin">Reference ID : <a class="text-blue-700" :href="orderLink">{{orderId.replace('order_', '')}}</a></p>
-				</template>
+					<div class="flex">
+						<button @click="downloadInvoice" class="block md:text-xl items-center rounded ml-auto md:pl-4 border hover:shadow-md transition-shadow duration-200 ease-in-out">
+							<span class="md:contents hidden text-lg md:font-medium text-gray-700">Download</span>
+							<font-awesome class="text-gray-500 mx-4" :icon="['fas', 'download']"></font-awesome>
+						</button>
+					</div>
+				</div>
 				<div v-else class="flex">
 					<div class="block">
 						<p class="block w-full text-2xl md:text-3xl font-normal text-gray-800">Confirm Your Order</p>
@@ -92,8 +100,23 @@
             </p>
         </div>
     </div>
-	<div v-else>
-		<svg class="mx-auto h-6 w-8 mr-2 animate animate-spin" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+
+	<!-- Not found -->
+	<div v-else-if="loaded && !valid" class="mx-auto w-full py-12">
+		<!-- TODO: Make this screen proper -->
+		<div class="mx-auto text-3xl md:text-5xl font-light text-center text-dark-100">
+			Order Not found
+		</div>
+		<!-- <label for="orderIdInput">Order ID</label>
+		<input id="orderIdInput" v-model="orderIdInput" type="text"/> -->
+		<div class="px-12 mt-12">
+			<g-image src="~/assets/images/logo.png" class="w-2/3 max-w-64 mx-auto object-fit"></g-image>
+		</div>
+	</div>
+
+	<!-- Loading -->
+	<div v-else class="mx-auto h-32 mx-auto mt-16 h-full w-full w-8">
+		<svg class="animate animate-spin" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
 			<circle cx="50" cy="50" r="45" fill="transparent"
 				stroke="currentColor" stroke-width="10px" stroke-linecap='round'
 				stroke-dasharray='170' stroke-dashoffset='120'/>
@@ -105,7 +128,6 @@
 <script>
 import Repository from "@/repository/RepositoryFactory";
 const RAZORPAY_CHECKOUT_URI="https://checkout.razorpay.com/v1/checkout.js"
-const SHOW_KEYS = ["email_id", "first_name", "last_name", "campaign", "trees", "amount", "currency"];
 
 export default {
     props: {
@@ -116,8 +138,10 @@ export default {
 		return {
 			order: {},
 			loaded: false,
+			valid: false,
 			processing: false,
-			orderLink: "#"
+			orderLink: "#",
+			invoiceHTML: null,
 		}
 	},
 	async mounted() {
@@ -128,7 +152,7 @@ export default {
 			razorpayCheckout.setAttribute('src', RAZORPAY_CHECKOUT_URI)
 			// razorpayCheckout.async = true
 			document.head.appendChild(razorpayCheckout)
-			this.orderLink = window.location.origin + '/checkout/' + this.orderId
+			this.orderLink = window.location.origin + '/invoice/' + this.orderId
 		}
 	},
 	computed: {
@@ -139,13 +163,23 @@ export default {
 			showMap.set('Name', donor.first_name + ' ' + donor.last_name)
 			showMap.set('Campaign', campaign)
 			showMap.set('Date', new Date(contribution.date.seconds * 1000).toLocaleDateString())
+			if (donor.pan) showMap.set('PAN Number', donor.pan)
 			return showMap
 		}
 	},
 	methods: {
 		async loadOrder() {
 			this.loaded = false
-			this.order = await Repository.donation.get(this.orderId)
+			const order = await Repository.donation.get(this.orderId)
+			if (order) {
+				console.log(this.order)
+				if (order?.contribution?.amount && order?.donor?.email_id) {
+					this.valid = true
+					this.order = order
+				} else {
+					this.valid = false
+				}
+			}
 			this.loaded = true
 		},
 		sanitize: function (data) {
@@ -158,6 +192,8 @@ export default {
 				return data.split('_').join(' ')
 			}
 			return data
+		},
+		downloadInvoice: async function() {
 		},
 		collect: async function() {
 			this.processing = true

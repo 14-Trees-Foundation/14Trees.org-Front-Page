@@ -9,7 +9,12 @@
   force = true
 
 [[redirects]]
-  from = "/checkout/*"
-  to = "/checkout/_order_id.html"
+  from = "/invoice/*"
+  to = "/invoice/_order_id.html"
   status = 200
   force = true
+
+[functions]
+  # Includes all HTML files inside the "files/" directory.
+  included_files = ["assets/*.html"]
+  node_bundler = "esbuild"

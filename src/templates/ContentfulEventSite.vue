@@ -42,7 +42,7 @@ export default {
             return this.$page.event
         },
         header() {
-            // if (this.event.headerImage && this.event.headerImage?.file) {
+                // if (this.event.headerImage && this.event.headerImage?.file) {
             //     return this.event.headerImage.file.url
             // }
             // if (this.event.headerImageLink) return this.event.headerImageLink

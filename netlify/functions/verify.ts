@@ -1,7 +1,7 @@
 import { Handler } from "@netlify/functions";
-import { initializeApp, cert, ServiceAccount }  from 'firebase-admin/app';
-import { getFirestore, DocumentReference } from 'firebase-admin/firestore';
-import sendgridMail from '@sendgrid/mail';
+import { getFirestore } from 'firebase-admin/firestore';
+import { sendEmailReceipt, initServices, generateInvoice,  } from "./lib/utils";
+import { donation } from "./lib/model";
 
 type VerifyPayload = {
     paymentId: string, 
@@ -10,51 +10,7 @@ type VerifyPayload = {
     signature: string
 }
 
-type donation = {
-    paymentCaptured: boolean,
-    campaign: string,
-    source: string,
-    contribution: {
-        trees: number,
-        amount: number,
-        currency: 'INR' | 'USD',
-        date: Date,
-    }
-    donor: {
-        first_name?: string,
-        last_name?: string,
-        email_id: string,
-        phone: string,
-        ref: DocumentReference,
-    }
-}
-
-function initServices() {
-    const firebaseSecrets: ServiceAccount = {
-        projectId: process.env.FIREBASE_ADMIN_PROJECT_ID,
-        clientEmail: process.env.FIREBASE_ADMIN_CLIENT_EMAIL,
-        privateKey: process.env.FIREBASE_ADMIN_PRIVATE_KEY,
-    }
-    // databaseURL: `https://${DATABASE_NAME}.firebaseio.com` // not required for firestore?
-    initializeApp({ credential: cert(firebaseSecrets) });
-    sendgridMail.setApiKey(process.env.SENDGRID_API_KEY);
-}
-
-async function sendEmailReceipt(donation: donation) {
-    const msg = {
-        to: donation.donor.email_id,
-        from: "test@14trees.org",
-        templateId: process.env.SENDGRID_TEMPLATE_ID,
-        dynamicTemplateData: {
-            first_name: donation.donor.first_name,
-            trees: donation.contribution.trees,
-        }
-    }
-   await sendgridMail.send(msg);
-}
-
 // type Order = { "id": "order_DaZlswtdcn9UNV", "entity": "order", "amount": 50000, "amount_paid": 0, "amount_due": 50000, "currency": "INR", "receipt": "Receipt #20", "status": "created", "attempts": 0, "notes": [], "created_at": 1572502745 }
-
 function checkValidity(payment: VerifyPayload) {
     // Only for initial testing
     // Verify signature using sha256 hash
@@ -64,7 +20,8 @@ function checkValidity(payment: VerifyPayload) {
     return payment.orderId_orig === payment.orderId_checkout
 }
 
-const handler: Handler = async (event, context) => {
+const handler: Handler = async (event, ctx) => {
+    let context: "test" | "prod" = process.env.CONTEXT === "production" ? "prod" : "test"
     try {
         const verifyPayload: VerifyPayload = JSON.parse(event.body)
         console.log("Verifyng payment for ", verifyPayload.paymentId, verifyPayload.orderId_orig)
@@ -87,10 +44,29 @@ const handler: Handler = async (event, context) => {
                 return { statusCode: 404, body: 'Not found in database' }
             } else {
                 const donation = donationSnap.data() as donation;
-                await donationRef.update({ paymentCaptured: true, paymentId: verifyPayload.paymentId });
                 dbUpdated = true;
-                await sendEmailReceipt(donation)
+                const name = donation.donor.first_name + ' ' + donation.donor.last_name;
+                const pdfBytes = await generateInvoice({
+                    name, pan: donation.donor.pan,
+                    invoice_number: verifyPayload.orderId_orig,
+                    rate: 3000, quantity: donation.contribution.trees,
+                });
+
+                await sendEmailReceipt(donation.donor.email_id,
+                    donation, [{ 
+                        content: Buffer.from(pdfBytes).toString("base64"),
+                        filename: `RECEIPT_${name.replace(" ", "_")}-14Trees.pdf`,
+                        type: "application/pdf",
+                        disposition: "attachment"
+                    }],
+                    context
+                )
                 emailSent = true;
+                await donationRef.update({ 
+                    emailSent,
+                    paymentCaptured: true,
+                    paymentId: verifyPayload.paymentId,
+                });
             }
         }
     
