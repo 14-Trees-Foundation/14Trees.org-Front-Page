@@ -9,7 +9,7 @@ export async function generateInvoice (opts: InvoiceOptions) {
     // https://invoice-generator.com/developers#custom-fields
     const invoice_options = {
         // Data fields
-        logo: `${process.env.URL}/logo.png`,
+        logo: "https://14trees.org/logo_name.png",
         from: "14 Trees Foundation\nAddress Line 1\nAddress Line 2\n14trees.org",
         to: opts.name,
         ship_to: opts.pan,
