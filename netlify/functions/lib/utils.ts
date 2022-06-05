@@ -3,6 +3,7 @@ import sendgridMail from '@sendgrid/mail';
 import Razorpay from 'razorpay';
 import { getFirestore } from 'firebase-admin/firestore';
 import { donation, donor, EmailAttachment, InvoiceOptions, RazorpayPayment } from "./model";
+import { sheetInit } from './googleDocs';
 const fetch = require('node-fetch')
 
 export async function generateInvoice (opts: InvoiceOptions) {
@@ -53,7 +54,7 @@ export function initServices() {
         // databaseURL: `https://${DATABASE_NAME}.firebaseio.com` // not required for firestore?
         initializeApp({ credential: cert(firebaseSecrets) });
     }
-    sendgridMail.setApiKey(process.env.SENDGRID_API_KEY);
+    // sendgridMail.setApiKey(process.env.SENDGRID_API_KEY);
 }
 
 export async function sendEmailReceipt(to: string, donation: donation, attachments: EmailAttachment[], context: "test" | "prod" = "test") {

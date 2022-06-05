@@ -6,10 +6,10 @@
                     <!-- <span id="blackOverlay" class="w-full h-full absolute opacity-25 bg-black rounded-lg"></span> -->
                 <!-- </div> -->
                 <div class="flex flex-wrap justify-center">
-                    <div class="w-7/8 lg:w-7/12 mt-12">
-                        <h1 class="mt-2 dark:text-gray-200 font-light">{{post.title}}</h1>
-                        <Person class="md:py-1" v-bind="getAuthor" />
-                        <p class="text-gray-900 text-md md:text-lg font-light pt-4">{{toDate(post.date)}}</p>
+                    <div class="pt-1/4 w-screen-md">
+                        <Person class="w-full" v-bind="getAuthor" variant="profile"/>
+                        <h1 class="xl:(mt-12 text-5xl) mt-4 text-2xl dark:text-gray-200 font-light ">{{post.title}}</h1>
+                        <p class="text-gray-400 text-sm font-bold pt-4">{{toDate(post.date)}}</p>
                         <div class="mb-12 mt-4 md:text-lg lg:text-xl text-md leading-relaxed dark:text-gray-200 text-gray-800">
                             <div class="font-light font-sans" v-html="post.content"></div>
                         </div>

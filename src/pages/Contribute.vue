@@ -1,7 +1,7 @@
  <template>
      <Layout>
         <div class="container full-page-generic">
-            <div class="lg:(border shadow-xl py-32 mb-12 rounded-md)">
+            <div class="lg:(py-32 mb-12 rounded-md)">
                 <h1 class="title-text mt-0">Contribute Now</h1>
                 <div class="mx-4 md:pt-4">
                     <div v-if="newOrder">

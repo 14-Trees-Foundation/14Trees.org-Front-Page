@@ -162,8 +162,10 @@ export default {
 			showMap.set('Email ID', donor.email_id)
 			showMap.set('Name', donor.first_name + ' ' + donor.last_name)
 			showMap.set('Campaign', campaign)
+			showMap.set('Purpose', contribution.purpose)
 			showMap.set('Date', new Date(contribution.date.seconds * 1000).toLocaleDateString())
 			if (donor.pan) showMap.set('PAN Number', donor.pan)
+			showMap.set("Amount", ` ${contribution.currency === "INR" ? "₹" : "$"} ${contribution.amount/100}`)
 			return showMap
 		}
 	},

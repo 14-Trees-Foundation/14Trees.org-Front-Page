@@ -1,7 +1,8 @@
 import { Handler } from "@netlify/functions";
 import { getFirestore } from 'firebase-admin/firestore';
-import { sendEmailReceipt, initServices, generateInvoice,  } from "./lib/utils";
+import { sendEmailReceipt, initServices, generateInvoice } from "./lib/utils";
 import { donation } from "./lib/model";
+import { addToSheet, sheetInit } from "./lib/googleDocs";
 
 type VerifyPayload = {
     paymentId: string, 
@@ -15,7 +16,7 @@ function checkValidity(payment: VerifyPayload) {
     // Only for initial testing
     // Verify signature using sha256 hash
     // More info here: https://razorpay.com/docs/payment-gateway/web-integration/custom/#step-5-verify-the-signature
-    console.log(payment)
+    // console.log(payment)
 
     return payment.orderId_orig === payment.orderId_checkout
 }
@@ -24,7 +25,7 @@ const handler: Handler = async (event, ctx) => {
     let context: "test" | "prod" = process.env.CONTEXT === "production" ? "prod" : "test"
     try {
         const verifyPayload: VerifyPayload = JSON.parse(event.body)
-        console.log("Verifyng payment for ", verifyPayload.paymentId, verifyPayload.orderId_orig)
+        console.log("Verifyng payment for ", verifyPayload)
     
         let valid: boolean = checkValidity(verifyPayload)
         let emailSent: boolean = false
@@ -46,27 +47,50 @@ const handler: Handler = async (event, ctx) => {
                 const donation = donationSnap.data() as donation;
                 dbUpdated = true;
                 const name = donation.donor.first_name + ' ' + donation.donor.last_name;
-                const pdfBytes = await generateInvoice({
-                    name, pan: donation.donor.pan,
-                    invoice_number: verifyPayload.orderId_orig,
-                    rate: 3000, quantity: donation.contribution.trees,
-                });
+                // const pdfBytes = await generateInvoice({
+                //     name, pan: donation.donor.pan,
+                //     invoice_number: verifyPayload.orderId_orig,
+                //     rate: 3000, quantity: donation.contribution.trees,
+                // });
 
-                await sendEmailReceipt(donation.donor.email_id,
-                    donation, [{ 
-                        content: Buffer.from(pdfBytes).toString("base64"),
-                        filename: `RECEIPT_${name.replace(" ", "_")}-14Trees.pdf`,
-                        type: "application/pdf",
-                        disposition: "attachment"
-                    }],
-                    context
-                )
-                emailSent = true;
-                await donationRef.update({ 
-                    emailSent,
-                    paymentCaptured: true,
-                    paymentId: verifyPayload.paymentId,
-                });
+                // Sending email with Sendgrid
+                // await sendEmailReceipt(donation.donor.email_id,
+                //     donation, [{ 
+                //         content: Buffer.from(pdfBytes).toString("base64"),
+                //         filename: `RECEIPT_${name.replace(" ", "_")}-14Trees.pdf`,
+                //         type: "application/pdf",
+                //         disposition: "attachment"
+                //     }],
+                //     context
+                // )
+
+                // Add to google sheets
+
+                try {
+                    const sheetId = context === "prod" ? process.env.SHEET_ID_PROD : process.env.SHEET_ID_TEST
+                    const doc = await sheetInit(sheetId)
+                    await addToSheet(doc, { 
+                        Date: donation.contribution.date.toDate().toLocaleDateString(),
+                        Name: name,
+                        Email: donation.donor.email_id,
+                        PAN: donation.donor.pan,
+                        Amt: donation.contribution.amount / 100,
+                        Mode: "Online: Razorpay",
+                        OrderId: verifyPayload.orderId_orig,
+                    })
+
+                    emailSent = true;
+
+                    await donationRef.update({ 
+                        emailSent,
+                        paymentCaptured: true,
+                        paymentId: verifyPayload.paymentId,
+                    });
+                }
+                catch (err) {
+                    console.log(err)
+                }
+
             }
         }
     

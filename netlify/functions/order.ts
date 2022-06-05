@@ -20,7 +20,7 @@ const handler: Handler = async (event, ctx) => {
 
     let amount = formData.trees * 300000 // in paise 
     let options = {
-        amount: amount,  // amount in the smallest currency unit
+        amount: amount,  // amount in the smallest currency unit (paise)
         currency: "INR",
         notes: orderNotes
     };

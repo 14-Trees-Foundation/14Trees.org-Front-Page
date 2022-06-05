@@ -1,84 +1,84 @@
 <template>
 	<div v-if="loaded">
-		<div v-if="contribution_type != 'foreign'" class="md:mb-24 mb-4">
+		<div v-if="contribution_type != 'foreign'" class="md:mb-24 mb-4 max-w-screen-md mx-auto">
 			<ProgressCheckPoints :keys="['Select Type', 'Contribution', 'Information', 'Communication', 'Payment']" :activeIndex="form_stage"/>
 		</div>
 
 		<div v-show="!contribution_type">
-			<contribution-type v-on:select="selectType"/>
+			<contribution-type @select="selectType"/>
 		</div>
 
 		<div v-show="contribution_type">
- 		<ClientOnly>
-			<form action="#" method="POST" id="pledgeForm" @submit="checkAndSubmitForm" class="mt-10 md:ml-12 md:mb-32 mb-12">
-			<div v-if="message" class="max-w-screen-sm mx-auto">
-				<div class="my-12 relative px-4 py-3 leading-normal text-gray-700 bg-gray-300 rounded-lg" role="alert">
-					<span class="absolute inset-y-0 left-0 flex items-center mx-4">
-						<font-awesome :icon="['fas', 'exclamation-triangle']" class="text-gray-500" />
-					</span>
-					<p class="ml-8" v-html="message">
-					</p>
+			<form action="#" method="POST" id="pledgeForm" @submit="checkAndSubmitForm" class="mt-10 md:ml-12 md:mb-32 mb-12 p-3">
+				<div v-if="message" class="max-w-screen-sm mx-auto">
+					<div class="my-12 relative px-4 py-3 leading-normal text-gray-700 bg-gray-300 rounded-lg" role="alert">
+						<span class="absolute inset-y-0 left-0 flex items-center mx-4">
+							<font-awesome :icon="['fas', 'exclamation-triangle']" class="text-gray-500" />
+						</span>
+						<p class="ml-8" v-html="message">
+						</p>
+					</div>
 				</div>
-			</div>
-			<div v-if="contribution_type === 'foreign'" class="max-w-screen-sm mx-auto">
-				<label for="first_name" class="block text-sm font-medium text-gray-700">Campaign</label>
-				<select v-model="formData.contribution.campaign" required class="input-field">
-					<option v-for="(c,i) in campaigns" :key="i" :value="c.title">{{c.name}}
-					</option>
-				</select>
-				<div class="border rounded-md mt-2" v-if="selectedCampaign && selectedCampaign.description">
-					<p class="text-gray-600 text-sm font-light p-4">{{selectedCampaign.description}}</p>
+				<div v-if="contribution_type === 'foreign'" class="max-w-screen-sm mx-auto">
+					<label for="campaign" class="block text-sm font-medium text-gray-700">Campaign</label>
+					<select name="campaign" id="campaign" v-model="formData.contribution.campaign" required class="input-field">
+						<option v-for="(c,i) in campaigns" :key="i" :value="c.title">
+							{{c.name}}
+						</option>
+					</select>
+					<div class="border rounded-md mt-2" v-if="selectedCampaign && selectedCampaign.description">
+						<p class="text-gray-600 text-sm font-light p-4">{{selectedCampaign.description}}</p>
+					</div>
+					<!-- <div class="my-4 h-56 md:h-96 w-full border border-gray-300"> <div class="text-center mt-25 md:mt-48">IMAGE here?</div> </div> -->
 				</div>
-				<!-- <div class="my-4 h-56 md:h-96 w-full border border-gray-300"> <div class="text-center mt-25 md:mt-48">IMAGE here?</div> </div> -->
-			</div>
-			<div v-else>
-				<div id="contribution" class=" h-full transition-height duration-500 ease-in-out">
+				<div v-else class="max-w-screen-md mx-auto xl:mt-20">
 					<!-- ******************************************************** -->
 					<!-- ****************** Contribution ************************-->
 					<!-- ******************************************************** -->
-					<div class="mt-6 sm:mt-0" v-if="contributionExpand">
-						<div class="md:grid md:grid-cols-3 md:gap-6">
-							<div class="md:col-span-1">
-								<div class="px-4 sm:px-0">
-									<h3 class="text-lg font-medium leading-6 text-gray-900">Contribution</h3>
-									<p class="mt-1 text-sm text-gray-600">
-										Start your journey towards planting 14 Trees for the environment
-									</p>
-								</div>
-							</div>
-							<div class="mt-5 md:mt-0 col-span-2 lg:col-span-1">
+					<section id="contribution" class="h-full transition-height duration-500 ease-in-out">
+						<div class="mt-6 sm:mt-0" v-if="contributionExpand">
+							<h2 class="text-3xl font-medium leading-6 mb-12 text-gray-700">Contribution</h2>
+							<div class="mt-5 md:mt-0">
 								<div class="shadow overflow-hidden sm:rounded-md">
-									<div class="px-4 py-3 bg-white dark:bg-dark-grey sm:p-3">
-										<div class="grid grid-cols-4 gap-6">
-											<div class="col-span-4">
-												<label for="first_name" class="block text-sm font-medium text-gray-700">Campaign</label>
-												<select v-model="formData.contribution.campaign" required class="input-field">
+									<div class="py-3 bg-white dark:bg-dark-grey">
+										<div>
+											<div class="mb-5">
+												<label for="campaign" class="block text-sm font-medium text-gray-700">Project</label>
+												<select id="campaign" name="campaign" v-model="formData.contribution.campaign" required class="input-field">
 													<option v-for="(c,i) in campaigns" :key="i" :value="c.title">{{c.name}}
 													</option>
 												</select>
-														<div class="border rounded-md mt-2" v-if="selectedCampaign && selectedCampaign.description">
-															<p class="text-gray-600 text-sm font-light p-4">{{selectedCampaign.description}}</p>
-														</div>
+												<div class="border rounded-md mt-2" v-if="selectedCampaign && selectedCampaign.description">
+													<p class="text-gray-600 text-sm font-light p-4">{{selectedCampaign.description}}</p>
+												</div>
 											</div>
-											<div class="col-span-4" v-if="contribution_type==='india'">
-												<label for="last_name" class="block text-sm font-medium text-gray-700">Number of Trees</label>
+											<div class="mb-5">
+												<label for="purpose" class="block text-sm font-medium text-gray-700">Purpose</label>
+												<select id="purpose" v-model="formData.contribution.purpose" name="purpose" class="input-field">
+													<option v-for="p in purposes" :value="p.value" :key="p.value" :selected="p.value === formData.contribution.purpose">
+														{{p.label}}
+													</option>
+												</select>
+											</div>
+											<div v-if="contribution_type==='india'">
+												<label for="trees" class="block text-sm font-medium text-gray-700">Number of Trees</label>
 												<div v-if="orderId == null" class="flex flex-row w-full h-11 border-gray-300 border rounded">
 													<button type="button" @click="formData.contribution.trees--" class="mr-0.5 border-r transition-colors duration-200 ease-in-out flex-grow bg-gray-100 text-gray-600  hover:bg-red-300 h-full rounded-l cursor-pointer  focus:outline-none">
 														<span class="m-auto text-2xl font-thin">−</span>
 													</button>
-													<input type="number" :disabled="orderId !== null" v-model.number="formData.contribution.trees" min="1" class="w-2/3 flex-grow appearance-none input-field border-none rounded-none"/>
+													<input id="trees" type="number" :disabled="orderId !== null" v-model.number="formData.contribution.trees" min="1" class="w-2/3 flex-grow appearance-none input-field border-none rounded-none"/>
 													<button type="button" @click="formData.contribution.trees++" class="ml-1 border-l transition-colors duration-200 ease-in-out flex-grow bg-gray-100 text-gray-600  hover:bg-green-400 h-full rounded-r cursor-pointer focus:outline-none">
 														<span class="m-auto text-2xl font-thin">+</span>
 													</button>
 												</div>
-													<span v-else class="input-field text-gray-500 inline-flex items-center">
-														<span class="pl-1 pr-4 border-r"> {{formData.contribution.trees}} </span>
-														<font-awesome class="text-gray-300 mx-4" :icon="['fas', 'lock']"></font-awesome>
-														<span class="text-xs text-gray-400"> Please make a separate contribution to edit this field</span>
-													</span>
-													<div class="text-xl text-right mt-2"> 
-														<span class="text-sm font-light">Contribution Amount: </span>₹ {{3000*formData.contribution.trees}}
-													</div>
+												<div v-else class="input-field text-gray-500 inline-flex items-center">
+													<span class="pl-1 pr-4 border-r"> {{formData.contribution.trees}} </span>
+													<font-awesome class="text-gray-300 mx-4" :icon="['fas', 'lock']"></font-awesome>
+													<span class="text-xs text-gray-400"> Please make a separate contribution to edit this field</span>
+												</div>
+												<div class="text-xl text-right mt-2"> 
+													<span class="text-sm font-light">Contribution Amount: </span>₹ {{3000*formData.contribution.trees}}
+												</div>
 											</div>
 		
 													<!-- Names to add -->
@@ -108,24 +108,17 @@
 													<!-- Campaign Questions here -->
 													<!-- {{ campaignQuestions }} -->
 													<div v-if="campaignQuestions" class="col-span-4">
-														<FormulateForm class="col-span-4" v-model="values" :schema="campaignQuestions"/>
+														<FormKit type="form" class="col-span-4" v-model="values">
+															<FormKitSchema :schema="campaignQuestions"/>
+														</FormKit>
 													</div>
 										</div>
 									</div>
 								</div>
 							</div>
-						</div>
-						<div class="md:grid md:grid-cols-3 md:gap-6">
-							<div class="md:col-span-1">
-								<div class="px-4 sm:px-0">
-									<p class="text-sm text-gray-600 mt-6">
-										Besides making a monetary contribution, I am also interested in these opportunities. 
-									</p>
-								</div>
-							</div>
-							<div class="md:col-span-2">
+							<div>
 								<div class="shadow overflow-hidden sm:rounded-md">
-									<div class="px-4 py-3 bg-white dark:bg-dark-grey space-y-6 sm:p-3">
+									<div class="p-3 bg-white dark:bg-dark-grey space-y-6">
 										<fieldset>
 											<div class="mt-4 space-y-4">
 												<div class="flex items-start">
@@ -169,62 +162,67 @@
 									</div>
 								</div>
 							</div>
+							<button v-if="personal_infoExpand == false" class="focus:outline-none block w-24 h-12 mx-auto rounded-full" @click="checkSection">
+								<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 animate-bounce mx-auto" fill="none"
+									viewBox="0 0 24 24" stroke="currentColor">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+										d="M19 13l-7 7-7-7m14-8l-7 7-7-7" />
+								</svg>
+							</button>
 						</div>
-						<button v-if="personal_infoExpand == false" class="focus:outline-none block w-24 h-12 mx-auto rounded-full" @click="checkSection">
-							<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 animate-bounce mx-auto" fill="none"
-								viewBox="0 0 24 24" stroke="currentColor">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-									d="M19 13l-7 7-7-7m14-8l-7 7-7-7" />
-							</svg>
-						</button>
-					</div>
-					<div v-else @click="contributionExpand = true" class=" hover:bg-gray-50 transition-colors duration-500 
-					text-2xl font-extralight text-gray-800 dark:text-gray-400 pl-4 py-4 rounded-lg">
-						Your Contribution
-					</div>
-					<!-- Border -->
-					<div class="hidden sm:block" aria-hidden="true">
-						<div class="py-4 mx-auto">
-							<div class="border-t border-gray-200" />
+						<div v-else @click="contributionExpand=true" class=" hover:bg-gray-50 transition-colors duration-500 
+						text-2xl font-extralight text-gray-800 dark:text-gray-400 pl-4 py-4 rounded-lg">
+							Your Contribution
 						</div>
-					</div>
-				</div>
-				<div id="personal_info" class="transition-height">
+						<!-- Border -->
+						<div class="hidden sm:block" aria-hidden="true">
+							<div class="py-4 mx-auto">
+								<div class="border-t border-gray-200" />
+							</div>
+						</div>
+					</section>
+
 					<!-- ******************************************************** -->
 					<!-- ***************** Personal Info ************************ -->
 					<!-- ******************************************************** -->
-					<div class="mt-10 sm:mt-0" v-if="personal_infoExpand">
-						<div class="md:grid md:grid-cols-3 md:gap-6">
-							<div class="md:col-span-1">
-								<div class="px-4 sm:px-0">
-									<h3 class="text-lg font-medium leading-6 text-gray-900">Contact Information</h3>
-									<p class="mt-1 text-sm text-gray-600">
-										Choose an email address where you would like to receive correspondence.
-										<br/>
-										Indian taxpayers must submit their PAN details for income tax deductions.
-									</p>
-								</div>
-							</div>
+					<section id="personal_info" class="transition-height">
+						<div class="mt-10 sm:mt-0" v-if="personal_infoExpand">
+							<h2 class="text-3xl font-medium leading-6 text-gray-700">Contact Information</h2>
 							<div class="mt-5 md:mt-0 md:col-span-2">
 								<div class="shadow overflow-hidden sm:rounded-md">
-									<div class="px-4 py-3 bg-white dark:bg-dark-grey sm:p-3">
+									<div class="py-3 bg-white dark:bg-dark-grey">
 										<div class="grid grid-cols-6 gap-6">
-											<input-wrapper placeholder="First Name" class="col-span-6 sm:col-span-3" type="text" v-model="formData.donor.first_name" 
-											name="first_name" required id="first_name" autocomplete="given-name"/>
-											<input-wrapper class="col-span-6 sm:col-span-3" type="text" v-model="formData.donor.last_name"
-											name="last_name" id="last_name" autocomplete="family-name" placeholder="Last Name" required/>
-											<input-wrapper class="col-span-6 sm:col-span-3" v-model="formData.donor.email_id" 
-											name="email_address" type="email" id="email_address" placeholder="Email address" required />
-											<input-wrapper class="col-span-6 sm:col-span-3" v-model="formData.donor.pan" 
-											name="pan" type="text" id="pan" placeholder="PAN Number" />
-											<input-wrapper placeholder="Phone Number" class="col-span-6 sm:col-span-3" type="tel" v-model.number="formData.donor.phone"
-											name="phone_number" id="phone_number" autocomplete="tel" required min="999999999" max="9999999999" />
+											<div class="col-span-6 sm:col-span-3">
+												<InputWrapper placeholder="First Name" type="text" v-model="formData.donor.first_name" 
+												name="first_name" required id="first_name" autocomplete="given-name"/>
+											</div>
+												
+											<div class="col-span-6 sm:col-span-3">
+												<input-wrapper type="text" v-model="formData.donor.last_name"
+												name="last_name" id="last_name" autocomplete="family-name" placeholder="Last Name" required/>
+											</div>
+
+											<div class="col-span-6 sm:col-span-3">
+												<input-wrapper v-model="formData.donor.email_id" 
+												name="email_address" type="email" id="email_address" placeholder="Email address" required />
+											</div>
+
+											<div class="col-span-6 sm:col-span-3">
+												<input-wrapper v-model="formData.donor.pan" 
+												name="pan" type="text" id="pan" placeholder="PAN Number" />
+											</div>
+
+											<div class="col-span-6 sm:col-span-3">
+												<input-wrapper placeholder="Phone Number" type="tel" v-model.number="formData.donor.phone"
+												name="phone_number" id="phone_number" autocomplete="tel" required min="999999999" max="9999999999" />
+											</div>
+
 											<div class="col-span-6 sm:col-span-3">
 												<label for="country"
 													class="block text-sm font-medium text-gray-700">Country/Currency</label>
 												<select id="country" v-model="formData.contribution.currency" name="country" autocomplete="country" class="input-field">
 													<option v-for="c in currencies" :value="c.value" :key="c.value" :selected="c.value === formData.contribution.currency">
-																{{c.label}} {{c.value}}
+														<span> {{c.label}} </span>
 															</option>
 												</select>
 											</div>
@@ -252,45 +250,35 @@
 									</div>
 								</div>
 							</div>
+							<button v-if="communicationExpand == false" class="block w-24 h-12 mx-auto rounded-full" @click="checkSection">
+								<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 animate-bounce mx-auto" fill="none"
+									viewBox="0 0 24 24" stroke="currentColor">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+										d="M19 13l-7 7-7-7m14-8l-7 7-7-7" />
+								</svg>
+							</button>
 						</div>
-						<button v-if="communicationExpand == false" class="block w-24 h-12 mx-auto rounded-full" @click="checkSection">
-							<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 animate-bounce mx-auto" fill="none"
-								viewBox="0 0 24 24" stroke="currentColor">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-									d="M19 13l-7 7-7-7m14-8l-7 7-7-7" />
-							</svg>
-						</button>
-					</div>
-					<div v-else @click="personal_infoExpand = true" class=" hover:bg-gray-50 transition-colors duration-500 
-					text-2xl font-extralight text-gray-800 dark:text-gray-400 pl-4 py-4 rounded-lg">
-						Personal Info
-					</div>
-					<!-- Border -->
-					<div class="hidden sm:block" aria-hidden="true">
-						<div class="py-4 mx-auto">
-							<div class="border-t border-gray-200" />
+						<div v-else @click="personal_infoExpand = true" class=" hover:bg-gray-50 transition-colors duration-500 
+						text-2xl font-extralight text-gray-800 dark:text-gray-400 pl-4 py-4 rounded-lg">
+							Personal Info
 						</div>
-					</div>
-				</div>
-				<div id="communication" class="transition-height">
+						<!-- Border -->
+						<div class="hidden sm:block" aria-hidden="true">
+							<div class="py-4 mx-auto">
+								<div class="border-t border-gray-200" />
+							</div>
+						</div>
+					</section>
+
 					<!-- ******************************************************** -->
 					<!-- ****************** Communication ************************-->
 					<!-- ******************************************************** -->
-					<div class="my-10" v-if="communicationExpand">
-						<div class="md:grid md:grid-cols-3 md:gap-6">
-							<div class="md:col-span-1">
-								<div class="px-4 sm:px-0">
-									<h3 class="text-lg font-medium leading-6 text-gray-900">Communication</h3>
-									<p class="mt-1 text-sm text-gray-600">
-										Decide which communications you'd like to receive and how.
-										<br/>
-										14 Trees Foundation does not share your personal information with any third parties.
-									</p>
-								</div>
-							</div>
-							<div class="md:col-span-2">
+					<section id="communication" class="transition-height">
+						<div class="my-10" v-if="communicationExpand">
+							<h2 class="text-3xl font-medium leading-6 text-gray-700">Communication</h2>
+							<div>
 								<div class="shadow overflow-hidden sm:rounded-md">
-									<div class="px-4 bg-white dark:bg-dark-grey space-y-6 sm:p-3">
+									<div class="p-3 bg-white dark:bg-dark-grey space-y-6">
 										<fieldset>
 											<div class="mt-4 space-y-4">
 												<div class="flex items-start">
@@ -305,7 +293,7 @@
 															Trees Foundation's progress in your Inbox (once a quarter)</p>
 													</div>
 												</div>
-												<div class="flex items-start">
+												<!-- <div class="flex items-start">
 													<div class="flex items-center h-5">
 														<input id="newsletter" name="newsletter" v-model="formData.donor.notifications.newsletter"
 															type="checkbox" class="input-checkbox" />
@@ -315,49 +303,47 @@
 															class="font-medium text-gray-700">Newsletter</label>
 														<p class="text-gray-500">Subscribe to our newsletter for frequent updates and more contribution opportunities.</p>
 													</div>
-												</div>
+												</div> -->
 											</div>
 										</fieldset>
 									</div>
 								</div>
 							</div>
 						</div>
-					</div>
-					<div v-else @click="communicationExpand = true" class=" hover:bg-gray-50 transition-colors duration-500 
-					text-2xl font-extralight text-gray-800 dark:text-gray-400 pl-4 py-4 rounded-lg">
-						Communication
-					</div>
+						<div v-else @click="communicationExpand = true" class=" hover:bg-gray-50 transition-colors duration-500 
+						text-2xl font-extralight text-gray-800 dark:text-gray-400 pl-4 py-4 rounded-lg">
+							Communication
+						</div>
+					</section>
+
+				<!-- Border -->
+				<div class="hidden sm:block" aria-hidden="true">
+						<div class="py-4 mx-auto">
+							<div class="border-t border-gray-200" />
+						</div>
 				</div>
 
-			<!-- Border -->
-			<div class="hidden sm:block" aria-hidden="true">
-					<div class="py-4 mx-auto">
-						<div class="border-t border-gray-200" />
-					</div>
-			</div>
-
-			</div>
-				<!-- Contribute Button -->
-			<button type="submit" class="my-10 flex flex-row btn-action mx-auto text-white w-full md:w-72
-								bg-green-500 dark:bg-green-600 hover:bg-green-600 duration-500" :class="{'bg-green-700': processing}">
-					<svg v-if="processing" class="h-6 w-8 mr-2 animate animate-spin" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-						<circle cx="50" cy="50" r="45" fill="transparent"
-							stroke="currentColor" stroke-width="10px" stroke-linecap='round'
-							stroke-dasharray='170' stroke-dashoffset='120'/>
-					</svg>
-				<span v-if="contribution_type=== 'foreign'" class="text-xl">
-					Contribute via TERRE 
-					<font-awesome :icon="['fas', 'long-arrow-alt-right']" class="mx-2" />
-				</span>
-				<span v-else class="text-xl">Contribute</span>
-			</button>
+				</div>
+					<!-- Contribute Button -->
+				<button type="submit" class="my-10 flex flex-row btn-action mx-auto text-white w-full md:w-72
+									bg-green-500 dark:bg-green-600 hover:bg-green-600 duration-500" :class="{'bg-green-700': processing}">
+						<svg v-if="processing" class="h-6 w-8 mr-2 animate animate-spin" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+							<circle cx="50" cy="50" r="45" fill="transparent"
+								stroke="currentColor" stroke-width="10px" stroke-linecap='round'
+								stroke-dasharray='170' stroke-dashoffset='120'/>
+						</svg>
+					<span v-if="contribution_type=== 'foreign'" class="text-xl">
+						Contribute via TERRE 
+						<font-awesome :icon="['fas', 'long-arrow-alt-right']" class="mx-2" />
+					</span>
+					<span v-else class="text-xl">Contribute</span>
+				</button>
 			</form>
 			<modal :showModal="openConfirmation" @close="openConfirmation = false" :showCloseButton="true">
 				<div class="mx-auto">
 					<order-summary :orderId="orderId" rounded/>
 				</div>
 			</modal>
-		</ClientOnly>
 		</div>
  	</div>
 </template>
@@ -373,7 +359,7 @@ import Glide from '../Utilities/Glide.vue';
 import InputWrapper from '../Utilities/InputWrapper.vue';
 
 export default {
-    components: { Modal, OrderSummary, ProgressCheckPoints, ContributionType, Glide, InputWrapper },
+    components: { Modal, ProgressCheckPoints, ContributionType, Glide, InputWrapper, OrderSummary },
 	props: {
 		fromCampaign : {
 			type: String,
@@ -388,8 +374,12 @@ export default {
 		return {
 			currencies: [
 				{ label: 'India (INR)', value: 'INR' },
-				{ label: 'United Stated (USD)', value: 'USD' },
+				{ label: 'United Stated (USD)', value: 'USD'},
 				{ label: 'Other (USD)', value: 'other' }
+			],
+			purposes: [
+				{ label: 'Individual Contribution', value: 'individual' },
+				{ label: 'On behalf of', value: 'on behalf of' },
 			],
 			loaded: false,
 			contribution_type: "",
@@ -398,7 +388,6 @@ export default {
 			personal_infoExpand: true,
 			formData: {},
 			addName: "",
-			campaigns: null,
 			processing: false,
 			values: {},
 			// error: {},

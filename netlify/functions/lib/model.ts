@@ -24,7 +24,7 @@ export type donation = {
         trees: number,
         amount: number,
         currency: 'INR' | 'USD',
-        date: Date,
+        date: Date | any,
     }
     donor: {
         first_name?: string,

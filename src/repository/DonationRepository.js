@@ -55,7 +55,7 @@ async function verifyPayment(orderId_orig, response) {
 	let verify_response = await axios.post(rzpEndpoint, verifyPayload)
 	if (!verify_response?.data) { throw Error("Something went wrong") }
 
-	return verify_response.data.valid;
+	return verify_response.data?.valid || false;
 }
 
 /** 
@@ -125,19 +125,15 @@ export default {
 				campaign: formData.contribution.campaign,
 				names: formData.contribution.names,
 				source: "14trees-web",
+				assigned: false,
 				contribution: {
 					trees: formData.contribution.trees,
+					purpose : formData.contribution.purpose,
 					amount: verifiedAmount,
 					currency : currency,
 					date : new Date()
 				},
-				donor: {
-					first_name: formData.donor.first_name,
-					last_name: formData.donor.last_name,
-					email_id: formData.donor.email_id,
-					phone: formData.donor.phone,
-					pan: formData.donor.pan,
-				}
+				donor: formData.donor 
 			}
 			await saveToFirestore(orderId, contribution, formData.donor)
 			return orderId
@@ -227,6 +223,7 @@ const donationFormTemplate = {
 	},
 	contribution: {
 		names: [],
+		purpose: "individual",
 		currency: "INR",
 		campaign: "",
 		trees: 1,

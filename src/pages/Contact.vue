@@ -18,7 +18,7 @@
 					</div>
 					<div class="lg:w-1/2 px-6 mt-4 lg:mt-0">
 						<h2 class="title-font font-semibold text-gray-900 tracking-widest text-xs">EMAIL</h2>
-						<a class="text-blue-500 leading-relaxed" href="mailto:project14trees@gmail.com">project14trees@gmail.com</a>
+						<a class="text-blue-500 leading-relaxed" href="mailto:project14trees@gmail.com">contact@14trees.org</a>
 						<h2 class="title-font font-semibold text-gray-900 tracking-widest text-xs mt-4">PHONE</h2>
 						<a class="text-blue-500 leading-relaxed" href="tel:+916362-819-073">(+91) 6362 819 073</a>
 					</div>
