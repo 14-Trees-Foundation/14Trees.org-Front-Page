@@ -1,5 +1,5 @@
 
-# Server Functions Documentation
+# Serverless Functions Documentation
 
 ## Order.ts
 
