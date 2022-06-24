@@ -1,8 +1,7 @@
 import UserRepository from "~/repository/UserRepository";
+import DonationRepository from "~/repository/DonationRepository";
 
-const repositories = {
-  user: UserRepository,
-};
 export default {
-  get: (name) => repositories[name],
+  user: UserRepository,
+  donation: DonationRepository
 };

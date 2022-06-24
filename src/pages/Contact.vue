@@ -1,34 +1,29 @@
 <template>
 	<Layout>
 		<SEO :title="'Contact'" :description="'Contact 14 Trees Foundation'" />
-		<div class="container full-page-generic">
+		<div class="container full-page-generic min-h-screen">
 			<h1 class="title-text">Contact Us</h1>
-			<div class="mx-4 md:pt-16 text-gray-700 dark:text-gray-300">
-				<div class="flex flex-row flex-wrap">
-					<div class="w-full md:w-1/2 mt-12 md:pr-12">
-						<h3 class="">
-							<span class="">Reforestation Site Address: </span>
-							<div class="text-2xl mx-2">
-								14 Trees Foundation, Sayagaon, Near Chas Kaman Hydroelectric Plant, Village Vetale, Maharashtra 412404
-							</div>
-						</h3>
-						<h3 class="">Email:
-							<a class="text-blue-500" href="mailto:project14trees@gmail.com">project14trees@gmail.com</a>
-							<!-- <span class="text-gray-600"> (project 14 trees [at] gmail dot com)</span> -->
-						</h3>
-						<h3 class="">Phone:
-							<a class="text-blue-500" href="tel:+916362-819-073">(+91) 6362 819 073</a>
-							<!-- <span class="text-gray-600"> (project 14 trees [at] gmail dot com)</span> -->
-						</h3>
+
+			<section class="m-12 bg-gray-900 min-h-1/2-screen rounded-lg overflow-hidden sm:mr-10 p-10 flex items-end justify-start relative">
+				<iframe width="100%" height="100%" title="map" class="absolute inset-0" frameborder="0"
+					marginheight="0" marginwidth="0" scrolling="no"
+					src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3773.943269077001!2d73.77400595031932!3d18.933905061281134!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTjCsDU2JzAyLjAiTiA3M8KwNDYnMzQuMyJF!5e0!3m2!1sen!2sin!4v1622636460367!5m2!1sen!2sin"
+					style="filter: grayscale(1) contrast(1.2) opacity(0.4);"></iframe>
+				<div class="bg-white relative flex flex-wrap py-6 rounded shadow-md mx-auto">
+					<div class="lg:w-1/2 px-6">
+						<h2 class="title-font font-semibold text-gray-900 tracking-widest text-xs">ADDRESS</h2>
+						<p class="mt-1">
+							14 Trees Foundation, Sayagaon, Near Chas Kaman Hydroelectric Plant, Village Vetale, Maharashtra 412404
+							</p>
 					</div>
-					<div class="relative mx-auto pt-4 bg-grey-20 w-full md:w-1/2" style="padding-left: 50%">
-						<iframe
-							class="absolute mx-auto inset-0 p-2 w-3/4 md:w-full m-4 border border-gray-300 rounded-md bg-gray-200"
-							src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3773.943269077001!2d73.77400595031932!3d18.933905061281134!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTjCsDU2JzAyLjAiTiA3M8KwNDYnMzQuMyJF!5e0!3m2!1sen!2sin!4v1622636460367!5m2!1sen!2sin"
-							width="600" height="450" allowfullscreen="" loading="lazy"></iframe>
+					<div class="lg:w-1/2 px-6 mt-4 lg:mt-0">
+						<h2 class="title-font font-semibold text-gray-900 tracking-widest text-xs">EMAIL</h2>
+						<a class="text-blue-500 leading-relaxed" href="mailto:project14trees@gmail.com">project14trees@gmail.com</a>
+						<h2 class="title-font font-semibold text-gray-900 tracking-widest text-xs mt-4">PHONE</h2>
+						<a class="text-blue-500 leading-relaxed" href="tel:+916362-819-073">(+91) 6362 819 073</a>
 					</div>
 				</div>
-			</div>
+			</section>
 		</div>
 	</Layout>
 </template>
@@ -36,12 +31,10 @@
 
 <script>
 import ActionModal from '@/components/Modal/ActionModal.vue';
-import PaymentForm from "~/components/Partials/PaymentForm.vue";
 import SEO from "~/components/Partials/SEO.vue";
 
 export default {
   components: {
-    PaymentForm,
     SEO,
     ActionModal
   },
