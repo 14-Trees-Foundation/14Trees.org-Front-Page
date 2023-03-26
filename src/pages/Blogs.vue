@@ -3,16 +3,9 @@
 		<SEO :title="'Blogs'" :description="'Blogs about reforestation efforts by 14 Trees Foundation'"/>
     <section class="container full-page-generic">
       <h1 class="title-text">Blogs</h1>
-      <div class="flex items-center flex-wrap w-full sm:pxi-0 mx-auto my-2 ">
-        <template v-for="ext in extArticles">
-          <section :key="ext.node.title" class="md:w-1/2 w-full mt-2 px-8 md:pt-16">
-            <ArticlePreview v-bind="ext.node" />
-          </section>
-        </template>
-        <template v-for="post in blogPosts">
-          <section :key="post.node.title" class="md:w-1/2 w-full mt-2 px-8 md:pt-16">
-            <ArticlePreview v-bind="post.node" />
-          </section>
+      <div class="w-full sm:pxi-0 mx-auto my-2 grid xl:(grid-cols-4 w-screen-xl) md:(grid-cols-2 w-screen-sm) gap-4 p-2 md:pt-16">
+        <template v-for="post in allArticles">
+            <ArticlePreview v-bind="post.node" :key="post.node.title" class="w-full"/>
         </template>
       </div>
     </section>
@@ -41,6 +34,9 @@ export default {
 		blogPosts() {
 			return this.$page.blogPosts?.edges;
 		}, 
+    allArticles() {
+      return [...this.extArticles, ...this.blogPosts];
+    }
 	},
 	methods: {
 		withBreaks(a) {

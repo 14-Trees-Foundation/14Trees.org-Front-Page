@@ -92,3 +92,20 @@ export function parseTSV(tsv, full = false) {
     dataMap.forEach(row => shortMap.set(row.get("KeyA"), row.get("Value")))
     return shortMap
 }
+
+export const flattenToMap = (obj, map = new Map()) => {
+    if (obj instanceof Map) {
+        return obj
+    }
+    if (obj instanceof Object) {
+        for (const key of Object.keys(obj)) {
+            if (obj[key] instanceof Date) map.set(key, obj[key])
+            if (obj[key] instanceof Object) {
+                flattenToMap(obj[key], map)
+            } else {
+                map.set(key, obj[key])
+            }
+        }
+    }
+    return map
+};

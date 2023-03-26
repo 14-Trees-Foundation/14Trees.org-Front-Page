@@ -7,3 +7,14 @@
   to = "/14TFoundation_80g.pdf"
   status = 200 
   force = true
+
+[[redirects]]
+  from = "/invoice/*"
+  to = "/invoice/_order_id.html"
+  status = 200
+  force = true
+
+[functions]
+  # Includes all HTML files inside the "files/" directory.
+  included_files = ["assets/*.html"]
+  node_bundler = "esbuild"

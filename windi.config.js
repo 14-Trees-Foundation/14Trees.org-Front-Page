@@ -1,11 +1,15 @@
 //tailwind border color plugin powered by
 //https://github.com/tailwindcss/tailwindcss/pull/560#issuecomment-503222143
 var _ = require('lodash')
-var flattenColorPalette = require('tailwindcss/lib/util/flattenColorPalette').default
-const colors = require('tailwindcss/colors')
+// var flattenColorPalette = require('tailwindcss/lib/util/flattenColorPalette').default
+const colors = require('windicss/colors')
 
 module.exports = {
   darkMode: 'class',
+  // mode: 'jit',
+  plugins: [
+    require('windicss/plugin/forms'),
+  ],
   purge: {
     content:["./src/**/*.html", "./src/**/*.vue", "./src/**/*.jsx"],
     options: {
@@ -18,9 +22,6 @@ module.exports = {
       ]
     }
   },
-  plugins: [
-    require('@tailwindcss/forms'),
-  ],
   theme: {
     extend: {
       variants: {
@@ -48,7 +49,8 @@ module.exports = {
       },
       height: {
         '128': '32rem',
-        'half-screen': '50vh'
+        'half-screen': '50vh',
+        'almost-screen': '90vh',
       },
       minHeight: {
         '0': '0',
@@ -61,6 +63,12 @@ module.exports = {
         '1/4-screen': '25vh',
         '1/2-screen': '50vh',
         '3/4-screen': '75vh',
+      },
+      maxWidth: {
+        '0': '0',
+        '1/4-screen': '25vw',
+        '1/2-screen': '50vw',
+        '3/4-screen': '75vw',
       },
       margin: {
         '-1/2-hscreen': '-50vh',
@@ -123,6 +131,7 @@ module.exports = {
       'auto': 'auto',
     },
     boxShadow: {
+      sm: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
       default: '0 1px 3px 0 rgba(0, 0, 0, .1), 0 1px 2px 0 rgba(0, 0, 0, .06)',
       md: '0 4px 6px -1px rgba(0, 0, 0, .1), 0 2px 4px -1px rgba(0, 0, 0, .06)',
       lg: '0 10px 15px -3px rgba(0, 0, 0, .1), 0 4px 6px -2px rgba(0, 0, 0, .05)',

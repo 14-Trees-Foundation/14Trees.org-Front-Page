@@ -9,7 +9,7 @@
                         <slot name="expand"/>
                     </div>
                     <div v-else>
-                        <button @click="open" class="md:h-12 md:w-40 h-10 w-32 block inline-flex items-center justify-center">
+                        <button @click="open" class="md:h-12 md:w-40 h-10 w-32 inline-flex items-center justify-center">
                             <slot name="expandButton" />
                         </button>
                     </div>

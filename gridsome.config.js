@@ -8,7 +8,7 @@ module.exports = {
   siteName: '14 Trees Foundation',
   siteDescription: "14 Trees Foundation is a charitable organization dedicated to building sustainable, carbon-footprint-neutral eco-systems through re-forestation",
   plugins: [
-    { use: 'gridsome-plugin-typescript' },
+    // { use: 'gridsome-plugin-typescript' },
     {
       use: '@gridsome/source-contentful',
       options: {
@@ -20,19 +20,10 @@ module.exports = {
       }
     },
     {
-      use: 'gridsome-plugin-tailwindcss',
-      options: {
-        tailwindConfig: './tailwind.config.js',
-        purgeConfig: {
-          whitelist: ['svg-inline--fa', 'table', 'table-striped', 'table-bordered', 'table-hover', 'table-sm'],
-          whitelistPatterns: [/fa-$/, /blockquote$/, /code$/, /pre$/, /table$/, /table-$/, /vueperslide$/, /vueperslide-$/]
-        },
-        presetEnvConfig: {},
-        shouldPurge: false,
-        shouldImport: false,
-        shouldTimeTravel: false,
-        shouldPurgeUnusedKeyframes: true,
-      }
+      use: 'gridsome-plugin-windicss',
+       options: {
+        // see https://github.com/windicss/vite-plugin-windicss/blob/main/packages/plugin-utils/src/options.ts
+      },
     },
     {
       use: 'gridsome-source-static-meta',
@@ -56,6 +47,7 @@ module.exports = {
     ContentfulCampaign: '/projects/:title',
     ContentfulContentPage: '/:title',
     ContentfulBlogPost: '/blogs/:slug',
+    ContentfulEventSite: '/event/:slug',
   },
   chainWebpack: config => {
       config.resolve.alias.set('@pageImage', '@/assets/images');

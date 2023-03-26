@@ -1,20 +1,18 @@
 <template>
-    <section>
-        <div class="card card-hover p-4 dark:text-gray-300 text-gray-700" @click="goToAction">
-            <div v-if="previewImage" class="rounded overflow-hidden md:h-64 md:w-full h-48 mb-3">
-                <div v-if="previewImage" v-lazy-container="{ selector: 'img' }">
-                    <img alt="content" class="object-cover object-center h-full w-full" :data-src="imgSrc(previewImage)"/>
-                </div>
-            </div>
-            <div class="md:h-48 overflow-y-hidden px-4">
-                <h2 class="text-2xl font-light text-gray-700 dark:text-gray-300 my-1 md:my-3 text-center">{{headline}}</h2>
-                <p class="nested md:contents hidden font-light font-sans text-md">{{content}}</p>
-            </div>
-            <div v-if="getAuthor">
-                <Person class="md:py-1" v-bind="getAuthor"/>
+    <div class="max-h-120 card rounded-md hover:-translate-y-1 dark:text-gray-300 text-gray-700 flex flex-col" @click="goToAction">
+        <div class="overflow-hidden max-h-40 mb-3 rounded-t-md">
+            <div v-if="previewImage" v-lazy-container="{ selector: 'img' }">
+                <img alt="content" class="object-cover object-center h-full w-full" :data-src="imgSrc(previewImage)"/>
             </div>
         </div>
-    </section>
+        <div class="overflow-y-hidden px-4 flex-grow">
+            <h2 class="text-xl font-medium text-gray-700 dark:text-gray-300 my-1">{{headline}}</h2>
+            <p class="nested md:contents hidden font-light font-sans text-sm">{{content}}</p>
+        </div>
+        <div v-if="getAuthor" class="">
+            <Person class="md:p-1 m-2 overflow-hidden" v-bind="getAuthor" variant="extra-small"/>
+        </div>
+    </div>
 </template>
 
 <script>
@@ -46,7 +44,7 @@ export default {
             return imgSrc(img, 500);
         },
         goToAction() {
-            window.location.href = this.link;
+            window.open(this.link, '_blank').focus();
         },
         textFromObj(o) {
             return documentToHtmlString(o);

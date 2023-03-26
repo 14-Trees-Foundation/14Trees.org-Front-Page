@@ -1,9 +1,9 @@
 <template>
-  <div id="app" class="dark:bg-dark-grey">
+  <div id="app" class="dark:bg-dark-grey min-h-screen flex flex-col">
     <navbar @setTheme="setTheme" :theme="this.theme"></navbar>
-
-    <slot />
-
+    <div class="flex-grow">
+      <slot/>
+    </div>
     <v-footer></v-footer>
   </div>
 </template>

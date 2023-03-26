@@ -16,7 +16,7 @@
             </button>
           </div>
           <!--body-->
-          <div class="relative pt-3 px-3 flex-auto">
+          <div class="relative flex-auto">
               <div class="max-h-3/4-screen overflow-y-auto">
                 <slot></slot>
               </div>

@@ -1,8 +1,8 @@
 <template>
 	<div>
-		<div class="w-full mb-2 overflow-x-hidden dark:text-gray-400">
+		<div class="overflow-x-hidden pt-5.5 px-4 dark:text-gray-400 bg-light-50 h-screen w-full">
 			<h2 class="text-xl my-0">Navigation</h2>
-			<div class="menu-links">
+			<div class="menu-links mt-4">
 				<ul>
 					<li v-for="navItem in getNavItems" :key="navItem.name" class="py-1">
 						<g-link class="block py-1" :to="navItem.link" :title="navItem.name"
@@ -37,6 +37,18 @@
 							</popover-mobile>
 						</ClientOnly>
 
+					</li>
+					<li class="w-full justify-center fixed bottom-0 left-0 p-4">
+						<button type="submit" class="w-full h-16 mx-auto flex flex-row btn-action 
+						text-white h-10 shadow-lg shadow-green-600/50 border border-green-550
+						bg-green-500 dark:bg-green-600 hover:bg-green-600 duration-500">
+							<g-link to="/contribute" class="text-md flex">
+								<div>
+									<g-image src="~/assets/images/Planting.svg" class="w-4 mr-2 mt-1"></g-image>
+								</div>
+								<span>Contribute Now</span>
+							</g-link>
+						</button>
 					</li>
 				</ul>
 			</div>
