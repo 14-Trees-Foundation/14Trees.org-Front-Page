@@ -44,6 +44,10 @@
           "name": "Volunteers",
           "link": "/team#volunteers",
           "external": true 
+        },{
+          "name": "IT Volunteers",
+          "link": "/team#it_volunteers",
+          "external": true 
         }  
       ]
     },
