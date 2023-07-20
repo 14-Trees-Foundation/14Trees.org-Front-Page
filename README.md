@@ -21,7 +21,3 @@ yarn develop
 * Custom Image Processor 
 * Pagination
 * Syntax Highlighting via PrismJS
-
-## Credits
-
-This starter is based on [Ghost Liebling](https://github.com/eddiesigner/liebling).
